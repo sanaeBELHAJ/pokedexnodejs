@@ -1,0 +1,16 @@
+{
+    "name": "NodeJsApplication",
+    "version": "1.0.0",
+    "keywords": [
+        "util",
+        "functional",
+        "server",
+        "client",
+        "browser"
+    ],
+    "author": "Sanae BELHAJ",
+    "contributors": [],
+    "dependencies": {
+        "express": "^4.16.2"
+    }
+}
