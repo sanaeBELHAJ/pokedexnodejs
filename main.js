@@ -1,5 +1,6 @@
 const express = require('express');
 const app = express();
+const crud = require('./crud.js');
 
 app.get('/', function (req, res) {
   res.send('Hello World!');
@@ -32,6 +33,3 @@ app.get('',function(req, res){
 app.get('',function(req, res){
     
 });
-        
-        
-  
