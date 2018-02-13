@@ -1,7 +1,7 @@
 const express = require('express');
 const app = express();
 const crud = require('./crud.js');
-const listPkm = require('./script.js');
+const bringPkm = require('./script.js');
 
 app.get('/', function (req, res) {
   res.send('Hello World!');
@@ -35,7 +35,8 @@ app.delete('/pokemons/:id',function(req, res){
 
 });
 
-app.get('/bringPokemons', function(req, res){
-  listPkm(res);
+app.get('/bringPokemons', async function(req, res){
+  let liste = await bringPkm(res);
+  res.json(JSON.stringify(liste));
   
 });
