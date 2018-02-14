@@ -117,11 +117,12 @@ module.exports.insertOne = function(Pokemon) {
 };
 
 //READ ALL
-module.exports.findAll = async function() {
+module.exports.findAll = async function(res) {
   Pokemon.find((err, pokemons) => {
     if (err) console.log(err);
     pokemons.forEach(function(pokemon) {
       console.log(pokemon);
+      res.send(pokemon);
       Pokemonevolution.find(
         {
           id_pokemon: pokemon._id
@@ -132,6 +133,22 @@ module.exports.findAll = async function() {
         }
       );
     });
+  });
+};
+module.exports.findOne = async function(id, res) {
+  Pokemon.find(id, (err, pokemon) => {
+    if (err) console.log(err);
+    console.log(pokemon);
+    res.send(pokemon);
+    Pokemonevolution.find(
+      {
+        id_pokemon: pokemon._id
+      },
+      (err, evolutions) => {
+        if (err) console.log(err);
+        res.send(evolutions);
+      }
+    );
   });
 };
 findAll();
@@ -170,7 +187,11 @@ module.exports.remove = function(id) {
     }
   );
 };
-
+function Update(id, param) {
+  Pokemon.update({ param }, function(pokemon) {
+    console.log("updated");
+  });
+}
 // // CREER UN DOCUMENT
 
 // // SAVE

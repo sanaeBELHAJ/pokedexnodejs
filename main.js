@@ -18,7 +18,8 @@ app.listen(3000, function() {
 
 //Liste de tous les pokemons en BDD
 app.get("/pokemons", async function(req, res) {
-  res.json(JSON.stringify(await crud.findAll()));
+  //res.json(JSON.stringify(await crud.findAll()));
+  crud.findAll(res);
 });
 
 //Rechercher un pokemon avec son ID
