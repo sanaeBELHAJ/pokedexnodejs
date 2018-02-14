@@ -41,12 +41,18 @@ app.post("/pokemons", async function(req, res) {
     niveau,
     img
   };
-  var find = await crud.searchPoke(pokemon); 
   
-  if(!find){
-    crud.insertOne(pokemon);
-    console.log("NOUVEAU POKEMON ENREGISTRE");
-    res.send("NOUVEAU POKEMON ENREGISTRE");
+  var find = await crud.searchPoke(pokemon); 
+  console.log("find : "+find);
+  
+  if(find == null){
+    var insert = await crud.insertOne(pokemon);
+    console.log("insert : "+insert);
+    
+    if(insert)
+      res.send("NOUVEAU POKEMON ENREGISTRE");
+    else 
+      res.send("ERREUR DANS LES PARAMETRES DU POKEMON");
   }
   else{
     console.log("CE POKEMON EXISTE DEJA");

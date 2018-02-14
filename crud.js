@@ -98,11 +98,17 @@ module.exports.insertOne = function(pokemon) {
     niveau: pokemon.niveau,
     img: pokemon.img
   });
-  p.save();
+  //TODO : mauvais retour lors d'une bonne insertion
+  return p.save((err, p) => {
+    if (err) 
+      return null;
+    return p;
+  });
+
 };
 
 //READ ALL
-module.exports.findAll = async function() {
+module.exports.findAll = function() {
   Pokemon.find((err, pokemons) => {
     if (err) console.log(err);
     pokemons.forEach(function(pokemon) {
