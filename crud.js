@@ -44,8 +44,8 @@ const Pokemonevolution = mongoose.model(
 );
 
 Pokemonevolution.find((err, pokemonevolutions) => {
-  if (err) console.log(err);
-
+  if (err) 
+    console.log(err);
   //  console.log(pokemonevolutions);
 });
 
@@ -60,7 +60,6 @@ module.exports.insertAll = function(Pokemons) {
       niveau: pokemon.niveau,
       img: pokemon.img
     });
-    console.log(p);
 
     p.save((err, p) => {
       // console.log(p._id);
@@ -72,11 +71,14 @@ module.exports.insertAll = function(Pokemons) {
               evolutionName: evolution.evolutionName
             });
             e.save((err, e) => {
-              const pe = new Pokemonevolution({
-                id_pokemon: p._id,
-                id_evolution: e._id
-              });
-              pe.save();
+              //ERREUR --> la variable e n'est pas transmise en paramètre et vaut donc undefined
+              if (e && e._id) {
+                const pe = new Pokemonevolution({
+                  id_pokemon: p._id,
+                  id_evolution: e._id
+                });
+                pe.save();
+              }
             });
           });
         }
