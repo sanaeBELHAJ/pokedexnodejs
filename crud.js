@@ -3,7 +3,7 @@ mongoose.connect("mongodb://localhost/pokedex");
 
 mongoose.connect("mongodb://localhost/pokedex");
 
-//Schémas
+/* SCHEMAS */
 const evolutionSchema = mongoose.Schema({
   id: Number,
   niveauEvolution: String,
@@ -35,7 +35,7 @@ const pokemonEvolutionSchema = mongoose.Schema({
   ]
 });
 
-//Modèles
+/* MODELES */
 const Pokemon = mongoose.model("Pokemon", pokemonSchema);
 const Evolution = mongoose.model("Evolution", evolutionSchema);
 const Pokemonevolution = mongoose.model(
@@ -49,7 +49,10 @@ Pokemonevolution.find((err, pokemonevolutions) => {
   //  console.log(pokemonevolutions);
 });
 
-//INSERT ALL
+
+/* REQUETES : */
+
+//INSERT ALL POKEMON
 module.exports.insertAll = function(Pokemons) {
   Pokemons.forEach(function(pokemon) {
     const p = new Pokemon({
@@ -88,7 +91,7 @@ module.exports.insertAll = function(Pokemons) {
 };
 
 
-//INSERT ONE
+//INSERT ONE POKEMON
 module.exports.insertOne = function(pokemon) {
   const p = new Pokemon({
     idnational: pokemon.id,
@@ -98,17 +101,17 @@ module.exports.insertOne = function(pokemon) {
     niveau: pokemon.niveau,
     img: pokemon.img
   });
-  //TODO : mauvais retour lors d'une bonne insertion
+  //TODO : mauvais message de retour lors d'une bonne insertion
   return p.save((err, p) => {
     if (err) 
       return null;
     return p;
   });
-
 };
 
-//READ ALL
-module.exports.findAll = async function(res) {
+
+//SELECT ALL POKEMON
+module.exports.findAll = function() {
   Pokemon.find((err, pokemons) => {
     if (err) console.log(err);
     pokemons.forEach(function(pokemon) {
@@ -126,6 +129,8 @@ module.exports.findAll = async function(res) {
     });
   });
 };
+
+//SELECT ONE POKEMON BY ID
 module.exports.findOne = async function(id, res) {
   Pokemon.find(id, (err, pokemon) => {
     if (err) console.log(err);
@@ -143,16 +148,15 @@ module.exports.findOne = async function(id, res) {
   });
 };
 findAll();
-//findAll();
 
-//Search Pokemon
-module.exports.searchPoke = async function(pokemon) {
-  return await Pokemon.findOne({'name': pokemon.name}, function(err, doc){
+//SELECT ONE POKEMON BY NAME
+module.exports.searchPoke = async function(name) {
+  return await Pokemon.findOne({'name': name}, function(err, doc){
     return doc;
   });
 };
 
-//DELETE
+//DELETE POKEMON + EVOLS
 module.exports.remove = function(id) {
   Pokemon.remove(
     {
