@@ -62,10 +62,10 @@ var pikatshu = {
 const tabPokemon = [pikatshu, pikatshu];
 Pokemonevolution.find((err, pokemonevolutions) => {
   if (err) console.log(err);
-  console.log(pokemonevolutions);
+  //console.log(pokemonevolutions);
 });
 
-insert(tabPokemon);
+//insert(tabPokemon);
 
 function insert(Pokemons) {
   Pokemons.forEach(function(pokemon) {
@@ -98,14 +98,28 @@ function findAll() {
   Pokemon.find((err, pokemons) => {
     if (err) console.log(err);
     pokemons.forEach(function(pokemon) {
-      //sconsole.log(pokemon._id);
+      //console.log(pokemon);
       Pokemonevolution.find(
         {
           id_pokemon: pokemon._id
         },
-        (err, evolutions) => {
+        (err, pokemonevolutions) => {
           if (err) console.log(err);
-          console.log(evolutions);
+          pokemonevolutions.forEach(function(pokemonevolut) {
+            Evolution.find(
+              {
+                _id: pokemonevolut.id_evolution
+              },
+              (err, evolutions) => {
+                if (err) console.log(err);
+                console.log(evolutions);
+                /*evolutions.forEach(function(evolution) {
+                  console.log(evolution);
+                });*/
+              }
+            );
+          });
+          // console.log(pokemonevolutions);
         }
       );
     });
