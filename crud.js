@@ -48,7 +48,6 @@ Pokemonevolution.find((err, pokemonevolutions) => {
   //  console.log(pokemonevolutions);
 });
 
-
 /* REQUETES : */
 
 //INSERT ALL POKEMON
@@ -87,7 +86,6 @@ module.exports.insertAll = function(Pokemons) {
   });
 };
 
-
 //INSERT ONE POKEMON
 module.exports.insertOne = function(pokemon) {
   const p = new Pokemon({
@@ -104,7 +102,6 @@ module.exports.insertOne = function(pokemon) {
     return p;
   });
 };
-
 
 //SELECT ALL POKEMON
 module.exports.findAll = function() {
@@ -148,7 +145,7 @@ module.exports.findOne = async function(id) {
 
 //SELECT ONE POKEMON BY NAME
 module.exports.searchPoke = async function(name) {
-  return await Pokemon.findOne({'name': name}, function(err, doc){
+  return await Pokemon.findOne({ name: name }, function(err, doc) {
     return doc;
   });
 };
@@ -188,11 +185,11 @@ module.exports.remove = function(id) {
     }
   );
 };
-function Update(id, param) {
+module.exports.update = function(id, param) {
   Pokemon.update({ param }, function(pokemon) {
     console.log("updated");
   });
-}
+};
 // // CREER UN DOCUMENT
 
 // // SAVE
