@@ -1,83 +1,119 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 mongoose.connect("mongodb://localhost/pokedex");
 const evolutionSchema = mongoose.Schema({
-    id: Number,
-    niveauEvolution: Number,
-    evolutionName: String
+  id: Number,
+  niveauEvolution: Number,
+  evolutionName: String
 });
 
 const pokemonSchema = mongoose.Schema({
-    id: Number,
-    name: String,
-    type: String,
-    niveau: Number,
-    img: String,
+  id: Number,
+  name: String,
+  type: String,
+  niveau: Number,
+  img: String
 });
 
-
 const pokemonEvolutionSchema = mongoose.Schema({
-    id_pokemon: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "pokemonSchema"
-    }],
-    id_evolution: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "evolutionSchema"
-    }]
+  id_pokemon: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "pokemonSchema"
+    }
+  ],
+  id_evolution: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "evolutionSchema"
+    }
+  ]
 });
 
 const Pokemon = mongoose.model("Pokemon", pokemonSchema);
 const Evolution = mongoose.model("Evolution", evolutionSchema);
-const Pokemonevolution = mongoose.model("Pokemonevolution", pokemonEvolutionSchema);
+const Pokemonevolution = mongoose.model(
+  "Pokemonevolution",
+  pokemonEvolutionSchema
+);
 
 Pokemonevolution.find((err, pokemonevolutions) => {
-    if (err) console.log(err);
-    console.log(pokemonevolutions);
+  if (err) console.log(err);
+  console.log(pokemonevolutions);
 });
 
-
 module.exports.insert = function(Pokemons) {
-    Pokemons.forEach(function (pokemon) {
-        const p = new Pokemon({
-            name: pokemon.name,
-            type: pokemon.type,
-            niveau: pokemon.niveau,
-            img: pokemon.img
-        });
-        p.save((err, p) => {
-            console.log(p._id)
-            pokemon.evolutions.forEach(function (evolution) {
-                const e = new Evolution({
-                    niveauEvolution: evolution.niveauEvolution,
-                    evolutionName: evolution.evolutionName
-                });
-                e.save((err, e) => {
-                    const pe = new Pokemonevolution({
-                        id_pokemon: p._id,
-                        id_evolution: e._id
-                    });
-                    pe.save();
-                });
-            });
-        });
+  Pokemons.forEach(function(pokemon) {
+    const p = new Pokemon({
+      name: pokemon.name,
+      type: pokemon.type,
+      niveau: pokemon.niveau,
+      img: pokemon.img
     });
-}
+    p.save((err, p) => {
+      console.log(p._id);
+      if (pokemon.evolutions != null) {
+        pokemon.evolutions.forEach(function(evolution) {
+          const e = new Evolution({
+            niveauEvolution: evolution.niveauEvolution,
+            evolutionName: evolution.evolutionName
+          });
+          e.save((err, e) => {
+            const pe = new Pokemonevolution({
+              id_pokemon: p._id,
+              id_evolution: e._id
+            });
+            pe.save();
+          });
+        });
+      }
+    });
+  });
+};
+module.exports.insertone = function(Pokemon) {
+  const p = new Pokemon({
+    name: pokemon.name,
+    type: pokemon.type,
+    niveau: pokemon.niveau,
+    img: pokemon.img
+  });
+  p.save((err, p) => {
+    console.log(p._id);
+    if (pokemon.evolutions != null) {
+      pokemon.evolutions.forEach(function(evolution) {
+        const e = new Evolution({
+          niveauEvolution: evolution.niveauEvolution,
+          evolutionName: evolution.evolutionName
+        });
+        e.save((err, e) => {
+          const pe = new Pokemonevolution({
+            id_pokemon: p._id,
+            id_evolution: e._id
+          });
+          pe.save();
+        });
+      });
+    }
+  });
+};
 
 module.exports.findAll = function() {
-    Pokemon.find((err, pokemons) => {
-        if (err) console.log(err);
-        pokemons.forEach(function (pokemon) {
-            //sconsole.log(pokemon._id);
-            Pokemonevolution.find({
-                id_pokemon: pokemon._id
-            }, (err, evolutions) => {
-                if (err) console.log(err);
-                console.log(evolutions);
-            });
-        });
+  Pokemon.find((err, pokemons) => {
+    if (err) console.log(err);
+    pokemons.forEach(function(pokemon) {
+      //sconsole.log(pokemon._id);
+      Pokemonevolution.find(
+        {
+          id_pokemon: pokemon._id
+        },
+        (err, evolutions) => {
+          if (err) console.log(err);
+          console.log(evolutions);
+        }
+      );
     });
-}
+  });
+};
 
 function remove(id) {
   Pokemon.remove(
