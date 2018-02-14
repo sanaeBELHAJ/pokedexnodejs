@@ -11,11 +11,12 @@
     "author": "Sanae BELHAJ",
     "contributors": [],
     "dependencies": {
-        "express": "^4.16.2"
+        "express": "^4.16.2",
+        "mongodb": "^3.0.2",
+        "mongoose": "^5.0.4"
     },
     "scripts": {
-        "start":"nodemon main.js",
-        "test" : "echo \"error\" && exit 1 "
+        "start": "nodemon main.js",
+        "test": "echo \"error\" && exit 1 "
     }
-    
 }
