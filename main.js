@@ -20,23 +20,20 @@ app.listen(3000, function() {
 //Liste de tous les pokemons en BDD
 app.get("/pokemons", async function(req, res) {
   //res.json(JSON.stringify(await crud.findAll()));
-  crud.findAll(res);
+  //crud.findAll(res);
 });
 
 //Récupérer les infos d'un pokemon
-app.get("/pokemons/:name", async function(req, res) {
-  console.log(req.body.name);
-  var find = await crud.searchPoke(req.body.name); 
-  console.log("find : "+find);
-  
-  if(find == null){
-    console.log("AUCUN POKEMON TROUVE");
+app.get("/pokemons/:search", async function(req, res) {
+  if(typeof req.params.search === "number")
+    var find = await crud.findOne(req.params.search, res);  
+  else
+    var find = await crud.searchPoke(req.params.search); 
+
+  if(find == null)
     res.send("AUCUN POKEMON TROUVE");
-  }
-  else{
-    console.log(find);
+  else
     res.send(find);
-  }
 });
 
 //Créer un pokemon
