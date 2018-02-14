@@ -6,7 +6,7 @@ mongoose.connect("mongodb://localhost/pokedex");
 //Schémas
 const evolutionSchema = mongoose.Schema({
   id: Number,
-  niveauEvolution: Number,
+  niveauEvolution: String,
   evolutionName: String
 });
 
@@ -61,31 +61,32 @@ module.exports.insertAll = function(Pokemons) {
       img: pokemon.img
     });
 
-    p.save((err, p) => {
-      // console.log(p._id);
-      if (p && p._id) {
-        if (pokemon.evolutions != null) {
-          pokemon.evolutions.forEach(function(evolution) {
-            const e = new Evolution({
-              niveauEvolution: evolution.niveauEvolution,
-              evolutionName: evolution.evolutionName
-            });
-            e.save((err, e) => {
-              //ERREUR --> la variable e n'est pas transmise en paramètre et vaut donc undefined
-              if (e && e._id) {
-                const pe = new Pokemonevolution({
-                  id_pokemon: p._id,
-                  id_evolution: e._id
+    p.save()
+      .then(p => {
+        if (p && p._id) {
+          if (pokemon.evolutions != null) {
+            pokemon.evolutions.forEach(function(evolution) {
+              const e = new Evolution({
+                niveauEvolution: evolution.niveauEvolution,
+                evolutionName: evolution.evolutionName
+              });
+              e.save()
+                .then(e => {
+                  //if (e && e._id) {
+                    const pe = new Pokemonevolution({
+                      id_pokemon: p._id,
+                      id_evolution: e._id
+                    });
+                    pe.save();
+                  //}  
                 });
-                pe.save();
-              }
             });
-          });
+          }
         }
-      }
     });
   });
 };
+
 
 //INSERT ONE
 module.exports.insertOne = function(pokemon) {
@@ -137,6 +138,7 @@ module.exports.findAll = async function() {
   });
 };
 findAll();
+
 //DELETE
 module.exports.remove = function(id) {
   Pokemon.remove(
