@@ -11,9 +11,12 @@
     "author": "Sanae BELHAJ",
     "contributors": [],
     "dependencies": {
+        "cheerio": "^1.0.0-rc.2",
         "express": "^4.16.2",
-        "mongodb": "^3.0.2",
-        "mongoose": "^5.0.4"
+        "fetch": "^1.1.0",
+        "jsonframe-cheerio": "^3.0.1",
+        "node-fetch": "^2.0.0",
+        "request": "^2.83.0"
     },
     "scripts": {
         "start": "nodemon main.js",
