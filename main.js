@@ -28,21 +28,37 @@ app.get("/pokemons/:id", function(req, res) {
 });
 
 //Créer un pokemon
-app.post("/pokemons", function(req, res) {
+app.post("/pokemons", async function(req, res) {
   let name = req.body.name;
   let type = req.body.type;
   let type2 = req.body.type2;
   let niveau = req.body.niveau;
-  let image = req.body.image;
+  let img = req.body.img;
 
   const pokemon = {
     name,
     type,
     type2,
     niveau,
-    image
+    img
   };
-  crud.insertone(pokemon);
+  
+  var find = await crud.searchPoke(pokemon); 
+  console.log("find : "+find);
+  
+  if(find == null){
+    var insert = await crud.insertOne(pokemon);
+    console.log("insert : "+insert);
+    
+    if(insert)
+      res.send("NOUVEAU POKEMON ENREGISTRE");
+    else 
+      res.send("ERREUR DANS LES PARAMETRES DU POKEMON");
+  }
+  else{
+    console.log("CE POKEMON EXISTE DEJA");
+    res.send("CE POKEMON EXISTE DEJA");
+  }
 });
 
 //Mettre à jour un pokemon
@@ -57,13 +73,14 @@ app.delete("/pokemons/:id", function(req, res) {});
 //Récupérer la liste de tous les pokemons sur Internet
 app.get("/bringPokemons", async function(req, res) {
   //Vidage de la base
-  let bdd = crud.findAll();
-  if (bdd) {
+
+  /*let bdd = crud.findAll();
+  if(bdd){
     bdd.forEach(element => {
       crud.remove(element.id);
     });
-  }
-
+  }*/
+  
   //Insertion des nouvelles données
   let liste = JSON.parse(JSON.stringify(await bringPkm.callApi(res)));
   res.json(liste);
