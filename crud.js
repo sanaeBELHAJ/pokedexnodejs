@@ -43,14 +43,11 @@ const Pokemonevolution = mongoose.model(
   pokemonEvolutionSchema
 );
 
-
 Pokemonevolution.find((err, pokemonevolutions) => {
-  if (err) 
-    console.log(err);
-  
+  if (err) console.log(err);
+
   //  console.log(pokemonevolutions);
 });
-*/
 
 //INSERT ALL
 module.exports.insertAll = function(Pokemons) {
@@ -136,7 +133,7 @@ module.exports.findAll = async function() {
       );
     });
   });
-}
+};
 findAll();
 //DELETE
 module.exports.remove = function(id) {
@@ -172,7 +169,7 @@ module.exports.remove = function(id) {
       console.log("deleted with all his evolution");
     }
   );
-}
+};
 
 // // CREER UN DOCUMENT
 
