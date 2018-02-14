@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+mongoose.connect("mongodb://localhost/pokedex");
 
 mongoose.connect("mongodb://localhost/pokedex");
 
@@ -42,36 +43,17 @@ const Pokemonevolution = mongoose.model(
   pokemonEvolutionSchema
 );
 
-Pokemonevolution.find((err, pokemonevolutions) => {
-  if (err) console.log(err);
-  console.log(pokemonevolutions);
-});
 
-var pikatshu = {
-  id: 235,
-  name: "pikatshu",
-  type: "electricit",
-  type2: "mared",
-  niveau: "",
-  img: "",
-  evolutions: [
-    {
-      niveauEvolution: 1,
-      evolutionName: "test"
-    },
-    {
-      niveauEvolution: 1,
-      evolutionName: "test"
-    },
-    {
-      niveauEvolution: 1,
-      evolutionName: "test"
-    }
-  ]
-};
-const tabPokemon = [pikatshu, pikatshu];
-//INSERT
-function insert(Pokemons) {
+Pokemonevolution.find((err, pokemonevolutions) => {
+  if (err) 
+    console.log(err);
+  
+  //  console.log(pokemonevolutions);
+});
+*/
+
+//INSERT ALL
+module.exports.insertAll = function(Pokemons) {
   Pokemons.forEach(function(pokemon) {
     const p = new Pokemon({
       idnational: pokemon.id,
@@ -104,9 +86,10 @@ function insert(Pokemons) {
       }
     });
   });
-}
-insert(tabPokemon);
-module.exports.insertone = function(Pokemon) {
+};
+
+//INSERT ONE
+module.exports.insertOne = function(Pokemon) {
   const p = new Pokemon({
     idnational: pokemon.id,
     name: pokemon.name,
@@ -137,7 +120,7 @@ module.exports.insertone = function(Pokemon) {
 };
 
 //READ ALL
-function findAll() {
+module.exports.findAll = async function() {
   Pokemon.find((err, pokemons) => {
     if (err) console.log(err);
     pokemons.forEach(function(pokemon) {
@@ -156,7 +139,7 @@ function findAll() {
 }
 findAll();
 //DELETE
-function remove(id) {
+module.exports.remove = function(id) {
   Pokemon.remove(
     {
       _id: id

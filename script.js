@@ -9,7 +9,7 @@ module.exports.callApi = async function(res){
                 .then(html => cheerio.load(html))
                 .then($ => {
                     let i=0;
-                    $("#pokedex-list table.pokedex tbody").each((key,value) => {
+                    $("#pokedex-list table.pokedex:last-child tbody").each((key,value) => {
                         $(value).children("tr").each((index,element) =>{
                             let pokemon = $(element).children("td");
 
@@ -42,7 +42,6 @@ async function getEvols(pokemons){
     const liste = [];
     let i=0;
     for(let item of pokemons){
-        //const resultat = await fetch("http://www.pokemontrash.com/pokedex/1-Bulbizarre.html") 
         const evolutions = await fetch("http://www.pokemontrash.com/pokedex/"+item.id+"-"+item.nom+".html")              
                         .then(res => res.text())
                         .then(html => cheerio.load(html))
