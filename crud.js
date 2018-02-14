@@ -72,13 +72,13 @@ module.exports.insertAll = function(Pokemons) {
               });
               e.save()
                 .then(e => {
-                  //if (e && e._id) {
+                  if (e && e._id) {
                     const pe = new Pokemonevolution({
                       id_pokemon: p._id,
                       id_evolution: e._id
                     });
                     pe.save();
-                  //}  
+                  }  
                 });
             });
           }
@@ -98,25 +98,7 @@ module.exports.insertOne = function(pokemon) {
     niveau: pokemon.niveau,
     img: pokemon.img
   });
-  console.log(p);
-  p.save((err, p) => {
-    if (pokemon.evolutions != null) {
-      pokemon.evolutions.forEach(function(evolution) {
-        const e = new Evolution({
-          niveauEvolution: evolution.niveauEvolution,
-          evolutionName: evolution.evolutionName
-        });
-        e.save((err, e) => {
-          const pe = new Pokemonevolution({
-            id_pokemon: p._id,
-            id_evolution: e._id
-          });
-          pe.save();
-        });
-      });
-    }
-  });
-  return "OK";
+  p.save();
 };
 
 //READ ALL
@@ -137,7 +119,14 @@ module.exports.findAll = async function() {
     });
   });
 };
-findAll();
+//findAll();
+
+//Search Pokemon
+module.exports.searchPoke = async function(pokemon) {
+  return await Pokemon.findOne({'name': pokemon.name}, function(err, doc){
+    return doc;
+  });
+};
 
 //DELETE
 module.exports.remove = function(id) {

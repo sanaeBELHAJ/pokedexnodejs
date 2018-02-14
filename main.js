@@ -27,7 +27,7 @@ app.get("/pokemons/:id", function(req, res) {
 });
 
 //Créer un pokemon
-app.post("/pokemons", function(req, res) {
+app.post("/pokemons", async function(req, res) {
   let name = req.body.name;
   let type = req.body.type;
   let type2 = req.body.type2;
@@ -41,7 +41,17 @@ app.post("/pokemons", function(req, res) {
     niveau,
     img
   };
-  crud.insertOne(pokemon);
+  var find = await crud.searchPoke(pokemon); 
+  
+  if(!find){
+    crud.insertOne(pokemon);
+    console.log("NOUVEAU POKEMON ENREGISTRE");
+    res.send("NOUVEAU POKEMON ENREGISTRE");
+  }
+  else{
+    console.log("CE POKEMON EXISTE DEJA");
+    res.send("CE POKEMON EXISTE DEJA");
+  }
 });
 
 //Mettre à jour un pokemon
