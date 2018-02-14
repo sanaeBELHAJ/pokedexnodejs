@@ -125,8 +125,22 @@ function findAll() {
     });
   });
 }
-
-findAll();
+function remove(id) {
+  Pokemon.remove(
+    {
+      _id: id
+    },
+    function(err) {
+      if (err) console.log(err);
+      console.log("deleted");
+    }
+  );
+  Pokemonevolution.find({ id_pokemon: id }, function(err, pokEvolutions) {
+    if (err) console.log(err);
+    pokEvolutions.forEach(function(pokEvolution) {});
+  });
+}
+//findAll();
 
 // // CREER UN DOCUMENT
 
