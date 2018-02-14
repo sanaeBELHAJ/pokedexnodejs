@@ -137,8 +137,27 @@ function remove(id) {
   );
   Pokemonevolution.find({ id_pokemon: id }, function(err, pokEvolutions) {
     if (err) console.log(err);
-    pokEvolutions.forEach(function(pokEvolution) {});
+    pokEvolutions.forEach(function(pokEvolution) {
+      Evolution.remove(
+        {
+          _id: pokEvolution.id_evolution
+        },
+        function(err) {
+          if (err) console.log(err);
+          console.log("deleted with all his evolution");
+        }
+      );
+    });
   });
+  Pokemonevolution.remove(
+    {
+      id_pokemon: id
+    },
+    function(err) {
+      if (err) console.log(err);
+      console.log("deleted with all his evolution");
+    }
+  );
 }
 //findAll();
 
