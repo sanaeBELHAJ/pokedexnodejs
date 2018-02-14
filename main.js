@@ -37,6 +37,7 @@ app.delete('/pokemons/:id',function(req, res){
 
 app.get('/bringPokemons', async function(req, res){
   let liste = await bringPkm(res);
-  res.json(JSON.stringify(liste));
+  console.log(liste);
+  res.json(JSON.parse(JSON.stringify(liste)));
   
 });

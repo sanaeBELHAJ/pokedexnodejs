@@ -2,6 +2,7 @@ const fetch = require("node-fetch");
 const cheerio = require("cheerio");
 
 async function bringPkm(res){
+    console.log("--Récupération des pokemons--");
     let pokemons = [];
     pokemons = await fetch("http://www.pokemontrash.com/pokedex/liste-pokemon.php")
                 .then(res => res.text())
@@ -28,14 +29,14 @@ async function bringPkm(res){
                             i++;
                         });
                     });
-                    console.log("Total : "+i);
+                    console.log("Total de pokémons récupérés : "+i);
                     return pokemons;
                 });
-    console.log("--DONE: Récupération des pokemons--");
     return getEvols(pokemons);
 }
 
 async function getEvols(pokemons){
+    console.log("--Récupération des évolutions--");
     const liste = [];
     let i=0;
     for(let item of pokemons){
@@ -66,47 +67,47 @@ async function getEvols(pokemons){
             console.log("Progression : "+i);
         i++;
     }
-    console.log("--DONE: Récupération des évolutions--");
+    console.log("Récupération terminée");
     return liste;
 }
 
 module.exports = bringPkm;
 
 /*
-CODE D'APPEL API - (annulé car sature l'API)
+    CODE D'APPEL API - (annulé car sature l'API)
 
-const fetch = require('node-fetch');
+    const fetch = require('node-fetch');
 
-function bringPkm(res){
-    callApi('https://pokeapi.co/api/v2/pokemon/?limit=3&offset=0')
-            .then(resultat => getInfos(resultat.results))
-            .then(tabPokemeons => console.log(tabPokemeons))
-}
-
-async function getInfos(pokemons){
-    const tab = []
-    for(let item of pokemons){
-        const resultat =  await callApi(item.url)
-        let id = item.url.replace('https://pokeapi.co/api/v2/pokemon/', '');
-        id = parseInt(item.id.replace('/',''));
-        const newObj = {
-          ...item,
-          id: id,
-          image :  resultat.sprites.front_default,
-          }
-          tab.push(newObj)    
+    function bringPkm(res){
+        callApi('https://pokeapi.co/api/v2/pokemon/?limit=3&offset=0')
+                .then(resultat => getInfos(resultat.results))
+                .then(tabPokemeons => console.log(tabPokemeons))
     }
-    return tab
-}
 
-module.exports = bringPkm;
+    async function getInfos(pokemons){
+        const tab = []
+        for(let item of pokemons){
+            const resultat =  await callApi(item.url)
+            let id = item.url.replace('https://pokeapi.co/api/v2/pokemon/', '');
+            id = parseInt(item.id.replace('/',''));
+            const newObj = {
+            ...item,
+            id: id,
+            image :  resultat.sprites.front_default,
+            }
+            tab.push(newObj)    
+        }
+        return tab
+    }
 
-function callApi(url){
-    return fetch(url)
-            .then(data => {
-                const res = data.json();
-                return res;
-            })
-            .catch(err => ({error : err, msg: "c'est une erreur"}));
-}
+    module.exports = bringPkm;
+
+    function callApi(url){
+        return fetch(url)
+                .then(data => {
+                    const res = data.json();
+                    return res;
+                })
+                .catch(err => ({error : err, msg: "c'est une erreur"}));
+    }
 */
