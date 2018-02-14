@@ -1,7 +1,7 @@
 const fetch = require("node-fetch");
 const cheerio = require("cheerio");
 
-async function bringPkm(res){
+module.exports.callApi = async function(res){
     console.log("--Récupération des pokemons--");
     let pokemons = [];
     pokemons = await fetch("http://www.pokemontrash.com/pokedex/liste-pokemon.php")
@@ -14,17 +14,19 @@ async function bringPkm(res){
                             let pokemon = $(element).children("td");
 
                             let id = $(element).children("td:first-child").text();
-                            let nom = pokemon.children("img").attr("alt");
-                            let image = "http://www.pokemontrash.com/pokedex/"+pokemon.children("img").attr("src");
+                            let name = pokemon.children("img").attr("alt");
+                            let img = "http://www.pokemontrash.com/pokedex/"+pokemon.children("img").attr("src");
                             let type = pokemon.children("span.type1").text();
                             let type2 = (typeof(pokemon.children("span.type2").text()) != undefined) ? pokemon.children("span.type2").text() : "";
-                
+                            let niveau = 0;
+
                             pokemons.push({
                                 id,
-                                nom,
-                                image,
+                                name,
+                                img,
                                 type,
-                                type2
+                                type2,
+                                niveau
                             });
                             i++;
                         });
@@ -41,18 +43,18 @@ async function getEvols(pokemons){
     let i=0;
     for(let item of pokemons){
         //const resultat = await fetch("http://www.pokemontrash.com/pokedex/1-Bulbizarre.html") 
-        const resultat = await fetch("http://www.pokemontrash.com/pokedex/"+item.id+"-"+item.nom+".html")              
+        const evolutions = await fetch("http://www.pokemontrash.com/pokedex/"+item.id+"-"+item.nom+".html")              
                         .then(res => res.text())
                         .then(html => cheerio.load(html))
                         .then($ => {
                             let i=0;
                             const listEvol = [];
                             $("#Stages div").each((key,value) => {
-                                let restrictions = $(value).children("span.evolution-trigger").text();
-                                let nom = $(value).children("a").text();
+                                let niveauEvolution = $(value).children("span.evolution-trigger").text();
+                                let evolutionName = $(value).children("a").text();
                                 const evolution = {
-                                    restrictions,
-                                    nom
+                                    niveauEvolution,
+                                    evolutionName
                                 };
                                 listEvol.push(evolution);
                             });
@@ -60,7 +62,7 @@ async function getEvols(pokemons){
                         }); 
         const newPoke = {
             ...item,
-            resultat    
+            evolutions    
         };
         liste.push(newPoke);
         if(i%50==0)
@@ -70,8 +72,6 @@ async function getEvols(pokemons){
     console.log("Récupération terminée");
     return liste;
 }
-
-module.exports = bringPkm;
 
 /*
     CODE D'APPEL API - (annulé car sature l'API)
