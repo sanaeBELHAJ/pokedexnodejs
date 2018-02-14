@@ -13,27 +13,25 @@ app.get("/", function(req, res) {
 });
 
 app.listen(3000, function() {
-  console.log("Example app listening on port 3000!");
+  console.log("Démarrage de l'application sur le port 3000!");
 });
 
 
 //Liste de tous les pokemons en BDD
 app.get("/pokemons", async function(req, res) {
-  res.json(JSON.stringify(await crud.findAll()));
-  //crud.findAll(res);
+  res.json(JSON.parse(JSON.stringify(await crud.findAll())));
 });
 
 //Récupérer les infos d'un pokemon
 app.get("/pokemons/:search", async function(req, res) {
-  if(typeof req.params.search === "number")
-    var find = await crud.findOne(req.params.search, res);  
-  else
-    var find = await crud.searchPoke(req.params.search); 
+  //Recherche par nom
+  if(isNaN(parseInt(req.params.search,10)))
+    var pokemon = await crud.searchPoke(req.params.search); 
+  else // Recherche par ID
+    var pokemon = await crud.findOne(parseInt(req.params.search,10)); 
 
-  if(find == null)
-    res.send("AUCUN POKEMON TROUVE");
-  else
-    res.send(find);
+  if(pokemon == null) res.send("AUCUN POKEMON TROUVE");
+  else res.send(pokemon);
 });
 
 //Créer un pokemon
@@ -47,43 +45,85 @@ app.post("/pokemons", async function(req, res) {
     img: req.body.img
   };
   
+  //Vérification de l'unicité du nom du pokemon
   var find = await crud.searchPoke(pokemon.name); 
-  console.log("find : "+find);
   
   if(find == null){
     var insert = await crud.insertOne(pokemon);
     console.log("insert : "+insert);
     
-    if(insert)
-      res.send("NOUVEAU POKEMON ENREGISTRE");
-    else 
-      res.send("ERREUR DANS LES PARAMETRES DU POKEMON");
+    if(insert) res.send("NOUVEAU POKEMON ENREGISTRE");
+    else res.send("ERREUR DANS LES PARAMETRES DU POKEMON");
   }
   else
     res.send("CE POKEMON EXISTE DEJA");
 });
 
 //Mettre à jour un pokemon
-app.put("/pokemons/:id", function(req, res) {});
+app.put("/pokemons/:search", async function(req, res) {
+  //Recherche par nom
+  if(isNaN(parseInt(req.params.search,10)))
+    var pokemon = await crud.searchPoke(req.params.search); 
+  else //Recherche par ID
+    var pokemon = await crud.findOne(parseInt(req.params.search,10));
+
+  if(pokemon == null) res.send("Pokemon introuvable");
+  else{
+    if(pokemon && pokemon._id){
+      //TODO UPDATE
+      res.send("Pokemon mis à jour");
+    }
+    else res.send("Pokemon introuvable");
+  }
+});
 
 //Modifier un pokemon
-app.patch("/pokemons/:id", function(req, res) {});
+app.patch("/pokemons/:search", async function(req, res) {
+  //Recherche par nom
+  if(isNaN(parseInt(req.params.search,10)))
+    var pokemon = await crud.searchPoke(req.params.search); 
+  else //Recherche par ID
+    var pokemon = await crud.findOne(parseInt(req.params.search,10));
+
+  if(pokemon == null) res.send("Pokemon introuvable");
+  else{
+    if(pokemon && pokemon._id){
+      //TODO PATCH
+      res.send("Pokemon modifié");
+    }
+    else res.send("Pokemon introuvable");
+  }
+});
 
 //Supprimer un pokemon
-app.delete("/pokemons/:id", function(req, res) {});
+app.delete("/pokemons/:search", async function(req, res) {
+  //Recherche par nom
+  if(isNaN(parseInt(req.params.search,10)))
+    var pokemon = await crud.searchPoke(req.params.search); 
+  else //Recherche par ID
+    var pokemon = await crud.findOne(parseInt(req.params.search,10));
+
+  if(pokemon == null) res.send("Pokemon introuvable");
+  else{
+    if(pokemon && pokemon._id){
+      crud.remove(pokemon._id);
+      res.send("Pokemon supprimé");
+    }
+    else res.send("Pokemon introuvable");
+  }
+});
 
 //Récupérer la liste de tous les pokemons sur Internet
 app.get("/bringPokemons", async function(req, res) {
-  //Vidage de la base
-
-  /*let bdd = crud.findAll();
+  //Renouvellement de la BDD
+  let bdd = JSON.parse(JSON.stringify(await crud.findAll()));
   if(bdd){
-    bdd.forEach(element => {
-      crud.remove(element.id);
+    bdd.forEach(function (element){
+      crud.remove(element._id);
     });
-  }*/
+  }
 
-  //Insertion des nouvelles données
+  //Insertion des nouvelles données via webscraping
   let liste = JSON.parse(JSON.stringify(await bringPkm.callApi(res)));
   res.json(liste);
   crud.insertAll(liste);
