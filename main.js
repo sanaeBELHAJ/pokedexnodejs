@@ -18,8 +18,8 @@ app.listen(3000, function() {
 
 //Liste de tous les pokemons en BDD
 app.get("/pokemons", async function(req, res) {
-  //res.json(JSON.stringify(await crud.findAll()));
-  crud.findAll(res);
+  res.json(JSON.stringify(await crud.findAll()));
+  //crud.findAll(res);
 });
 
 //Rechercher un pokemon avec son ID
@@ -42,20 +42,17 @@ app.post("/pokemons", async function(req, res) {
     niveau,
     img
   };
-  
-  var find = await crud.searchPoke(pokemon); 
-  console.log("find : "+find);
-  
-  if(find == null){
+
+  var find = await crud.searchPoke(pokemon);
+  console.log("find : " + find);
+
+  if (find == null) {
     var insert = await crud.insertOne(pokemon);
-    console.log("insert : "+insert);
-    
-    if(insert)
-      res.send("NOUVEAU POKEMON ENREGISTRE");
-    else 
-      res.send("ERREUR DANS LES PARAMETRES DU POKEMON");
-  }
-  else{
+    console.log("insert : " + insert);
+
+    if (insert) res.send("NOUVEAU POKEMON ENREGISTRE");
+    else res.send("ERREUR DANS LES PARAMETRES DU POKEMON");
+  } else {
     console.log("CE POKEMON EXISTE DEJA");
     res.send("CE POKEMON EXISTE DEJA");
   }
@@ -80,7 +77,7 @@ app.get("/bringPokemons", async function(req, res) {
       crud.remove(element.id);
     });
   }*/
-  
+
   //Insertion des nouvelles données
   let liste = JSON.parse(JSON.stringify(await bringPkm.callApi(res)));
   res.json(liste);

@@ -44,8 +44,7 @@ const Pokemonevolution = mongoose.model(
 );
 
 Pokemonevolution.find((err, pokemonevolutions) => {
-  if (err) 
-    console.log(err);
+  if (err) console.log(err);
   //  console.log(pokemonevolutions);
 });
 
@@ -61,32 +60,29 @@ module.exports.insertAll = function(Pokemons) {
       img: pokemon.img
     });
 
-    p.save()
-      .then(p => {
-        if (p && p._id) {
-          if (pokemon.evolutions != null) {
-            pokemon.evolutions.forEach(function(evolution) {
-              const e = new Evolution({
-                niveauEvolution: evolution.niveauEvolution,
-                evolutionName: evolution.evolutionName
-              });
-              e.save()
-                .then(e => {
-                  if (e && e._id) {
-                    const pe = new Pokemonevolution({
-                      id_pokemon: p._id,
-                      id_evolution: e._id
-                    });
-                    pe.save();
-                  }  
-                });
+    p.save().then(p => {
+      if (p && p._id) {
+        if (pokemon.evolutions != null) {
+          pokemon.evolutions.forEach(function(evolution) {
+            const e = new Evolution({
+              niveauEvolution: evolution.niveauEvolution,
+              evolutionName: evolution.evolutionName
             });
-          }
+            e.save().then(e => {
+              if (e && e._id) {
+                const pe = new Pokemonevolution({
+                  id_pokemon: p._id,
+                  id_evolution: e._id
+                });
+                pe.save();
+              }
+            });
+          });
         }
+      }
     });
   });
 };
-
 
 //INSERT ONE
 module.exports.insertOne = function(pokemon) {
@@ -100,20 +96,19 @@ module.exports.insertOne = function(pokemon) {
   });
   //TODO : mauvais retour lors d'une bonne insertion
   return p.save((err, p) => {
-    if (err) 
-      return null;
+    if (err) return null;
     return p;
   });
-
 };
 
 //READ ALL
-module.exports.findAll = async function(res) {
+module.exports.findAll = async function() {
+  liste = [];
   Pokemon.find((err, pokemons) => {
     if (err) console.log(err);
     pokemons.forEach(function(pokemon) {
       console.log(pokemon);
-      res.send(pokemon);
+      liste.push(pokemons);
       Pokemonevolution.find(
         {
           id_pokemon: pokemon._id
@@ -124,30 +119,32 @@ module.exports.findAll = async function(res) {
         }
       );
     });
+    return liste;
   });
+  return liste;
 };
-module.exports.findOne = async function(id, res) {
+module.exports.findOne = async function(id) {
   Pokemon.find(id, (err, pokemon) => {
     if (err) console.log(err);
     console.log(pokemon);
-    res.send(pokemon);
     Pokemonevolution.find(
       {
         id_pokemon: pokemon._id
       },
       (err, evolutions) => {
         if (err) console.log(err);
-        res.send(evolutions);
+        //res.send(evolutions);
       }
     );
   });
+  return pokemon;
 };
-findAll();
+//findAll();
 //findAll();
 
 //Search Pokemon
 module.exports.searchPoke = async function(pokemon) {
-  return await Pokemon.findOne({'name': pokemon.name}, function(err, doc){
+  return await Pokemon.findOne({ name: pokemon.name }, function(err, doc) {
     return doc;
   });
 };
