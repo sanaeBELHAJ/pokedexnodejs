@@ -41,7 +41,7 @@ app.post("/pokemons", function(req, res) {
     niveau,
     image
   };
-  crud.insertone(pokemon);
+  crud.insertOne(pokemon);
 });
 
 //Mettre à jour un pokemon
@@ -56,13 +56,14 @@ app.delete("/pokemons/:id", function(req, res) {});
 //Récupérer la liste de tous les pokemons sur Internet
 app.get("/bringPokemons", async function(req, res) {
   //Vidage de la base
-  let bdd = crud.findAll();
-  if (bdd) {
+
+  /*let bdd = crud.findAll();
+  if(bdd){
     bdd.forEach(element => {
       crud.remove(element.id);
     });
-  }
-
+  }*/
+  
   //Insertion des nouvelles données
   let liste = JSON.parse(JSON.stringify(await bringPkm.callApi(res)));
   res.json(liste);

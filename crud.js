@@ -86,7 +86,7 @@ module.exports.insertAll = function(Pokemons) {
 };
 
 //INSERT ONE
-module.exports.insertOne = function(Pokemon) {
+module.exports.insertOne = function(pokemon) {
   const p = new Pokemon({
     idnational: pokemon.id,
     name: pokemon.name,
