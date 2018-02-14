@@ -32,14 +32,14 @@ app.post("/pokemons", function(req, res) {
   let type = req.body.type;
   let type2 = req.body.type2;
   let niveau = req.body.niveau;
-  let image = req.body.image;
+  let img = req.body.img;
 
   const pokemon = {
     name,
     type,
     type2,
     niveau,
-    image
+    img
   };
   crud.insertOne(pokemon);
 });

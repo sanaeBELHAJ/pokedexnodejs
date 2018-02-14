@@ -91,13 +91,12 @@ module.exports.insertOne = function(pokemon) {
     idnational: pokemon.id,
     name: pokemon.name,
     type: pokemon.type,
-    type: pokemon.type2,
+    type2: pokemon.type2,
     niveau: pokemon.niveau,
     img: pokemon.img
   });
   console.log(p);
   p.save((err, p) => {
-    console.log(p._id);
     if (pokemon.evolutions != null) {
       pokemon.evolutions.forEach(function(evolution) {
         const e = new Evolution({
@@ -114,6 +113,7 @@ module.exports.insertOne = function(pokemon) {
       });
     }
   });
+  return "OK";
 };
 
 //READ ALL
