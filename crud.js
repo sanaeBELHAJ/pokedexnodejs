@@ -1,5 +1,7 @@
 const mongoose = require("mongoose");
 
+mongoose.connect("mongodb://localhost/pokedex");
+
 //Schémas
 const evolutionSchema = mongoose.Schema({
   id: Number,
@@ -9,8 +11,10 @@ const evolutionSchema = mongoose.Schema({
 
 const pokemonSchema = mongoose.Schema({
   id: Number,
+  idnational: Number,
   name: String,
   type: String,
+  type2: String,
   niveau: Number,
   img: String
 });
@@ -38,48 +42,80 @@ const Pokemonevolution = mongoose.model(
   pokemonEvolutionSchema
 );
 
-
 Pokemonevolution.find((err, pokemonevolutions) => {
   if (err) console.log(err);
   console.log(pokemonevolutions);
 });
 
+var pikatshu = {
+  id: 235,
+  name: "pikatshu",
+  type: "electricit",
+  type2: "mared",
+  niveau: "",
+  img: "",
+  evolutions: [
+    {
+      niveauEvolution: 1,
+      evolutionName: "test"
+    },
+    {
+      niveauEvolution: 1,
+      evolutionName: "test"
+    },
+    {
+      niveauEvolution: 1,
+      evolutionName: "test"
+    }
+  ]
+};
+const tabPokemon = [pikatshu, pikatshu];
 //INSERT
-module.exports.insert = function(Pokemons) {
+function insert(Pokemons) {
   Pokemons.forEach(function(pokemon) {
     const p = new Pokemon({
+      idnational: pokemon.id,
       name: pokemon.name,
       type: pokemon.type,
+      type2: pokemon.type2,
       niveau: pokemon.niveau,
       img: pokemon.img
     });
+    console.log(p);
+
     p.save((err, p) => {
-      console.log(p._id);
-      if (pokemon.evolutions != null) {
-        pokemon.evolutions.forEach(function(evolution) {
-          const e = new Evolution({
-            niveauEvolution: evolution.niveauEvolution,
-            evolutionName: evolution.evolutionName
-          });
-          e.save((err, e) => {
-            const pe = new Pokemonevolution({
-              id_pokemon: p._id,
-              id_evolution: e._id
+      // console.log(p._id);
+      if (p && p._id) {
+        if (pokemon.evolutions != null) {
+          pokemon.evolutions.forEach(function(evolution) {
+            const e = new Evolution({
+              niveauEvolution: evolution.niveauEvolution,
+              evolutionName: evolution.evolutionName
             });
-            pe.save();
+            e.save((err, e) => {
+              const pe = new Pokemonevolution({
+                id_pokemon: p._id,
+                id_evolution: e._id
+              });
+              pe.save();
+            });
           });
-        });
+        }
       }
     });
   });
-};
+}
+insert(tabPokemon);
 module.exports.insertone = function(Pokemon) {
   const p = new Pokemon({
+    idnational: pokemon.id,
     name: pokemon.name,
     type: pokemon.type,
+    type: pokemon.type2,
     niveau: pokemon.niveau,
     img: pokemon.img
   });
+  console.log(p);
   p.save((err, p) => {
     console.log(p._id);
     if (pokemon.evolutions != null) {
@@ -101,11 +137,11 @@ module.exports.insertone = function(Pokemon) {
 };
 
 //READ ALL
-module.exports.findAll = function() {
+function findAll() {
   Pokemon.find((err, pokemons) => {
     if (err) console.log(err);
     pokemons.forEach(function(pokemon) {
-      //sconsole.log(pokemon._id);
+      console.log(pokemon);
       Pokemonevolution.find(
         {
           id_pokemon: pokemon._id
@@ -117,8 +153,8 @@ module.exports.findAll = function() {
       );
     });
   });
-};
-
+}
+findAll();
 //DELETE
 function remove(id) {
   Pokemon.remove(
