@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
-
 mongoose.connect("mongodb://localhost/pokedex");
+
+//Schémas
 const evolutionSchema = mongoose.Schema({
     id: Number,
     niveauEvolution: Number,
@@ -15,7 +16,6 @@ const pokemonSchema = mongoose.Schema({
     img: String,
 });
 
-
 const pokemonEvolutionSchema = mongoose.Schema({
     id_pokemon: [{
         type: mongoose.Schema.Types.ObjectId,
@@ -27,16 +27,18 @@ const pokemonEvolutionSchema = mongoose.Schema({
     }]
 });
 
+//Modèles
 const Pokemon = mongoose.model("Pokemon", pokemonSchema);
 const Evolution = mongoose.model("Evolution", evolutionSchema);
 const Pokemonevolution = mongoose.model("Pokemonevolution", pokemonEvolutionSchema);
+
 
 Pokemonevolution.find((err, pokemonevolutions) => {
     if (err) console.log(err);
     console.log(pokemonevolutions);
 });
 
-
+//INSERT
 module.exports.insert = function(Pokemons) {
     Pokemons.forEach(function (pokemon) {
         const p = new Pokemon({
@@ -64,6 +66,7 @@ module.exports.insert = function(Pokemons) {
     });
 }
 
+//READ ALL
 module.exports.findAll = function() {
     Pokemon.find((err, pokemons) => {
         if (err) console.log(err);
@@ -79,6 +82,7 @@ module.exports.findAll = function() {
     });
 }
 
+//DELETE
 function remove(id) {
   Pokemon.remove(
     {
