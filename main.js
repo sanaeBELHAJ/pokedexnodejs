@@ -12,26 +12,39 @@ app.listen(3000, function() {
   console.log("Example app listening on port 3000!");
 });
 
-app.get("/pokemons", function(req, res) {
-  res.send("test");
+//Liste de tous les pokemons en BDD
+app.get('/pokemons',function(req, res){
+  res.send('test');
   crud.findAll();
 });
 
-app.get("/pokemons/:id", function(req, res) {
+//Rechercher un pokemon avec son ID
+app.get('/pokemons/:id',function(req, res){
   //req.query.id
 });
 
-app.post("/pokemons", function(req, res) {
-  crud.findAll();
+//Créer un pokemon
+app.post('/pokemons',function(req, res){
+
 });
 
-app.put("/pokemons/:id", function(req, res) {});
+//Mettre à jour un pokemon
+app.put('/pokemons/:id',function(req, res){
 
 app.patch("/pokemons/:id", function(req, res) {});
 
-app.delete("/pokemons/:id", function(req, res) {});
+//Modifier un pokemon
+app.patch('/pokemons/:id',function(req, res){
 
-app.get("/bringPokemons", async function(req, res) {
+});
+
+//Supprimer un pokemon
+app.delete('/pokemons/:id',function(req, res){
+
+});
+
+//Récupérer la liste de tous les pokemons sur Internet
+app.get('/bringPokemons', async function(req, res){
   let liste = JSON.parse(JSON.stringify(await bringPkm.callApi(res)));
   res.json(liste);
   crud.insert(liste);
