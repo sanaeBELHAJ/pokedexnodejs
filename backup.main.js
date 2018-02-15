@@ -13,9 +13,7 @@ app.get("/", function(req, res) {
 });
 
 app.listen(3000, function() {
-  console.log(
-    "***************Démarrage de l'application sur le port 3000!***************"
-  );
+  console.log("***************Démarrage de l'application sur le port 3000!***************");
 });
 
 //Liste de tous les pokemons en BDD
@@ -45,16 +43,18 @@ app.post("/pokemons", async function(req, res) {
   var find = await crud.searchPoke(pokemon.name);
 
   if (find == null) {
-    if (pokemon.niveau && isNaN(parseInt(pokemon.niveau, 10)))
+    if(pokemon.niveau && isNaN(parseInt(pokemon.niveau, 10)))
       res.send("Le niveau doit être un nombre entier");
-    else {
+    else{
       var insert = await crud.insertOne(pokemon);
-      console.log("insert : " + insert);
-
-      if (insert === null) res.send("ERREUR DANS LES PARAMETRES DU POKEMON");
+      console.log("insert : "+insert);
+      
+      if(insert === null) res.send("ERREUR DANS LES PARAMETRES DU POKEMON");
       else res.send("NOUVEAU POKEMON ENREGISTRE");
     }
-  } else res.send("CE POKEMON EXISTE DEJA");
+  }
+  else
+    res.send("CE POKEMON EXISTE DEJA");
 });
 
 /*
@@ -83,13 +83,15 @@ app.patch("/pokemons/:search", async function(req, res) {
   if (pokemon.pokemon == null) res.send("Pokemon introuvable");
   else {
     if (pokemon.pokemon && pokemon.pokemon._id) {
-      if (req.body.niveau && isNaN(parseInt(req.body.niveau, 10)))
+      if(req.body.niveau && isNaN(parseInt(req.body.niveau, 10)))
         res.send("Le niveau doit être un nombre");
-      else {
+      else{
         crud.update(pokemon.pokemon, req.body);
         res.send("Pokemon mis à jour");
       }
-    } else res.send("Pokemon introuvable");
+    } 
+    else 
+      res.send("Pokemon introuvable");
   }
 });
 
@@ -117,21 +119,22 @@ app.get("/bringPokemons", async function(req, res) {
   }
 
   //Insertion des nouvelles données via webscraping
-  console.log(await bringPkm.callApi(res));
-//  let liste = JSON.parse(JSON.stringify(await bringPkm.callApi(res)));
+  let liste = JSON.parse(JSON.stringify(await bringPkm.callApi(res)));
   res.json(liste);
   crud.insertAll(liste);
 });
 
-async function getPkm(search) {
+async function getPkm(search){
   //Recherche par nom
-  if (isNaN(parseInt(search, 10)))
-    return await crud.searchPoke(search); //Recherche par ID
-  else return await crud.findOne(parseInt(search, 10));
+  if(isNaN(parseInt(search,10)))
+    return await crud.searchPoke(search); 
+  else //Recherche par ID
+    return await crud.findOne(parseInt(search,10));
 }
 
 //Créer un utilisateur
 app.post("/users", function(req, res) {
+  console.log("coucou");
   const u = {
     fullName: req.body.fullName,
     email: req.body.email,
@@ -141,36 +144,11 @@ app.post("/users", function(req, res) {
   var insert = user.register(u);
   res.send("insert : " + u);
 });
-//afficher tous les utilisateurs
+
+//Créer un utilisateur
 app.get("/users", async function(req, res) {
+  console.log("coucou");
   var users = await user.findAll();
   res.send(users);
   // console.log(users);
-});
-
-//Récupérer les infos d'un user
-app.get("/users/:search", async function(req, res) {
-  var u = await user.findOne(req.params.search);
-  console.log(u);
-  if (u == null) res.send("AUCUN USER TROUVE");
-  else res.send(u);
-});
-
-//Ajouter un pokémon
-app.post("users/:id/pokemons", async function(req, res) {
-  console.log("coucou");
-  var u = await user.findOne(req.params.id);
-  var p = crud.findOne(req.body.id_pokemon);
-  var pokemon = [
-    {
-      id: req.body.id_pokemon,
-      niveau: req.body.niveau
-    }
-  ];
-  if (u != null && p != null) {
-    crud.addpokemon(id, pokemon);
-  }
-  console.log(u);
-  if (u == null) res.send("AUCUN USER TROUVE");
-  else res.send(id, u);
 });
