@@ -105,32 +105,89 @@ module.exports.insertOne = function(pokemon) {
 //SELECT ALL POKEMON
 module.exports.findAll = async function() {
   const liste = [];
-  await Pokemon.find((err, pokemons) => {
+  //Liste des pokemons
+  let pokemons = await Pokemon.find((err, pokemons) => {
     if (err) console.log(err);
-    pokemons.forEach(function(pokemon) {
-      liste.push(pokemon);
-      Pokemonevolution.find({ id_pokemon: pokemon._id }, (err, evolutions) => {
-          if (err) console.log(err);
-        }
-      );
-    });
   });
+
+  //Liste des evolutions des pokemons
+  pokemons.forEach(async function(pokemon) {
+    // const listEvol = [];
+    // Pokemonevolution.find({ id_pokemon: pokemon._id }, (err, evolutions) => {
+    //   if (err) console.log(err);
+
+    //   //Parcours de chaque évolution pour un pokemon
+    //   evolutions.forEach(async function(pokeevol){
+    //     console.log(listEvol);          
+    //     let doc = await Evolution.findOne({ _id: pokeevol.id_evolution }, function(err, doc) {
+    //       //console.log(doc);
+    //       //return doc;
+    //     })
+    //     .then(doc => {
+    //       const evolution = {
+    //         niveauEvolution: doc.niveauEvolution,
+    //         evolutionName: doc.evolutionName
+    //       };
+    //       console.log(evolution);
+    //       listEvol.push(evolution);
+    //       return listEvol;
+    //     });
+        
+    //     console.log(listEvol);  
+    //   });
+
+    //   //console.log(listEvol);
+    //   return listEvol;
+    // }); 
+
+    // const poke = {
+    //   pokemon,
+    //   listEvol
+    // };
+    // liste.push(poke); 
+  });
+  
   return liste;
 };
 
 //SELECT ONE POKEMON BY NATIONAL-ID
 module.exports.findOne = async function(id) {
-  return await Pokemon.findOne({ idnational: id }, function(err, pokemon) {
-    if (err) console.log(err);
-    if(pokemon && pokemon._id){
-      Pokemonevolution.find({ id_pokemon: pokemon._id }, (err, evolutions) => {
-        if (err) console.log(err);
-        //res.send(evolutions);
-      });
-    }
-    //console.log(pokemon);
-    return pokemon;
-  });
+  let pokemon = await Pokemon.findOne({ idnational: id })
+    .then(pokemon => {
+      return pokemon;
+    });
+  
+  var listEvol = [];
+  if(pokemon && pokemon._id){
+    listEvol = await Pokemonevolution.find({ id_pokemon: pokemon._id }, function(err, result){
+                      return result;
+                    })
+                    .then(async pokevolutions => {
+                    
+                      const evolutions = pokevolutions.map(async function(pokeevol){
+                        var info = await Evolution.findOne({ _id: pokeevol.id_evolution }, function(err, doc) {
+                                      return doc;
+                                    })
+                                    .then(doc => {
+                                      const evolution = {
+                                        niveauEvolution: doc.niveauEvolution,
+                                        evolutionName: doc.evolutionName
+                                      };
+                                      return evolution;
+                                    });
+                        return info;
+                      });
+                      return Promise.all(evolutions)
+                    })
+                    .then(detailsEvol => {
+                      return detailsEvol;
+                    });
+  }
+  
+  return {
+    pokemon: pokemon,
+    listEvol : listEvol
+  };
 };
 
 //SELECT ONE POKEMON BY NAME
@@ -141,17 +198,18 @@ module.exports.searchPoke = async function(name) {
 };
 
 //DELETE POKEMON + EVOLS
-module.exports.remove = function(id) {
-  Pokemonevolution.find({ id_pokemon: id }, (err, pokEvolutions) => {
+module.exports.remove = async function(id) {
+  console.log(id);
+  await Pokemonevolution.find({ id_pokemon: id }, (err, pokEvolutions) => {
     if (err) console.log(err);
     console.log(pokEvolutions);
-    /*pokEvolutions.forEach(function(pokEvolution) {
+    pokEvolutions.forEach(function(pokEvolution) {
       Evolution.remove({ _id: pokEvolution.id_evolution }, function(err) {
           if (err) console.log(err);
           console.log("deleted with all his evolution");
         }
       );
-    });*/
+    });
   });
 
   Pokemonevolution.remove({ id_pokemon: id}, function(err) {

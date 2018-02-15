@@ -13,7 +13,7 @@ app.get("/", function(req, res) {
 });
 
 app.listen(3000, function() {
-  console.log("Démarrage de l'application sur le port 3000!");
+  console.log("***************Démarrage de l'application sur le port 3000!***************");
 });
 
 //Liste de tous les pokemons en BDD
@@ -23,10 +23,7 @@ app.get("/pokemons", async function(req, res) {
 
 //Récupérer les infos d'un pokemon
 app.get("/pokemons/:search", async function(req, res) {
-  //Recherche par nom
-  if (isNaN(parseInt(req.params.search, 10)))
-    var pokemon = await crud.searchPoke(req.params.search); // Recherche par ID
-  else var pokemon = await crud.findOne(parseInt(req.params.search, 10));
+  var pokemon = await getPkm(req.params.search);
 
   if (pokemon == null) res.send("AUCUN POKEMON TROUVE");
   else res.send(pokemon);
@@ -47,19 +44,18 @@ app.post("/pokemons", async function(req, res) {
 
   if (find == null) {
     var insert = await crud.insertOne(pokemon);
-    console.log("insert : " + insert);
-
-    if (insert) res.send("NOUVEAU POKEMON ENREGISTRE");
-    else res.send("ERREUR DANS LES PARAMETRES DU POKEMON");
-  } else res.send("CE POKEMON EXISTE DEJA");
+    console.log("insert : "+insert);
+    
+    if(!insert) res.send("ERREUR DANS LES PARAMETRES DU POKEMON");
+    else res.send("NOUVEAU POKEMON ENREGISTRE");
+  }
+  else
+    res.send("CE POKEMON EXISTE DEJA");
 });
 
 //Mettre à jour un pokemon
 app.put("/pokemons/:search", async function(req, res) {
-  //Recherche par nom
-  if (isNaN(parseInt(req.params.search, 10)))
-    var pokemon = await crud.searchPoke(req.params.search); //Recherche par ID
-  else var pokemon = await crud.findOne(parseInt(req.params.search, 10));
+  var pokemon = await getPkm(req.params.search);
 
   if (pokemon == null) res.send("Pokemon introuvable");
   else {
@@ -72,10 +68,7 @@ app.put("/pokemons/:search", async function(req, res) {
 
 //Modifier un pokemon
 app.patch("/pokemons/:search", async function(req, res) {
-  //Recherche par nom
-  if (isNaN(parseInt(req.params.search, 10)))
-    var pokemon = await crud.searchPoke(req.params.search); //Recherche par ID
-  else var pokemon = await crud.findOne(parseInt(req.params.search, 10));
+  var pokemon = await getPkm(req.params.search);
 
   if (pokemon == null) res.send("Pokemon introuvable");
   else {
@@ -88,10 +81,7 @@ app.patch("/pokemons/:search", async function(req, res) {
 
 //Supprimer un pokemon
 app.delete("/pokemons/:search", async function(req, res) {
-  //Recherche par nom
-  if (isNaN(parseInt(req.params.search, 10)))
-    var pokemon = await crud.searchPoke(req.params.search); //Recherche par ID
-  else var pokemon = await crud.findOne(parseInt(req.params.search, 10));
+  var pokemon = await getPkm(req.params.search);
 
   if (pokemon == null) res.send("Pokemon introuvable");
   else {
@@ -117,6 +107,14 @@ app.get("/bringPokemons", async function(req, res) {
   res.json(liste);
   crud.insertAll(liste);
 });
+
+async function getPkm(search){
+  //Recherche par nom
+  if(isNaN(parseInt(search,10)))
+    return await crud.searchPoke(search); 
+  else //Recherche par ID
+    return await crud.findOne(parseInt(search,10));
+}
 
 //Créer un utilisateur
 app.post("/users", function(req, res) {
