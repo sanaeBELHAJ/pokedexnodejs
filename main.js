@@ -46,7 +46,7 @@ app.post("/pokemons", async function(req, res) {
     var insert = await crud.insertOne(pokemon);
     console.log("insert : "+insert);
     
-    if(!insert) res.send("ERREUR DANS LES PARAMETRES DU POKEMON");
+    if(insert === null) res.send("ERREUR DANS LES PARAMETRES DU POKEMON");
     else res.send("NOUVEAU POKEMON ENREGISTRE");
   }
   else
@@ -56,26 +56,36 @@ app.post("/pokemons", async function(req, res) {
 //Mettre à jour un pokemon
 app.put("/pokemons/:search", async function(req, res) {
   var pokemon = await getPkm(req.params.search);
-
-  if (pokemon == null) res.send("Pokemon introuvable");
+  if (pokemon.pokemon == null) res.send("Pokemon introuvable");
   else {
-    if (pokemon && pokemon._id) {
-      //TODO UPDATE
-      res.send("Pokemon mis à jour");
-    } else res.send("Pokemon introuvable");
+    if (pokemon.pokemon && pokemon.pokemon._id) {
+      if(req.body.niveau && isNaN(parseInt(req.body.niveau, 10)))
+        res.send("Le niveau doit être un nombre");
+      else{
+        crud.update(pokemon.pokemon, req.body);
+        res.send("Pokemon mis à jour");
+      }
+    } 
+    else 
+      res.send("Pokemon introuvable");
   }
 });
 
 //Modifier un pokemon
 app.patch("/pokemons/:search", async function(req, res) {
   var pokemon = await getPkm(req.params.search);
-
-  if (pokemon == null) res.send("Pokemon introuvable");
+  if (pokemon.pokemon == null) res.send("Pokemon introuvable");
   else {
-    if (pokemon && pokemon._id) {
-      //TODO PATCH
-      res.send("Pokemon modifié");
-    } else res.send("Pokemon introuvable");
+    if (pokemon.pokemon && pokemon.pokemon._id) {
+      if(req.body.niveau && isNaN(parseInt(req.body.niveau, 10)))
+        res.send("Le niveau doit être un nombre");
+      else{
+        crud.update(pokemon.pokemon, req.body);
+        res.send("Pokemon mis à jour");
+      }
+    } 
+    else 
+      res.send("Pokemon introuvable");
   }
 });
 
@@ -128,6 +138,7 @@ app.post("/users", function(req, res) {
   var insert = user.register(u);
   res.send("insert : " + u);
 });
+
 //Créer un utilisateur
 app.get("/users", async function(req, res) {
   console.log("coucou");

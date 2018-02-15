@@ -219,8 +219,10 @@ module.exports.remove = async function(id) {
 };
 
 //UPDATE
-module.exports.update = function(id, param) {
-  Pokemon.update({ param }, function(pokemon) {
-    console.log("updated");
+module.exports.update = async function(pokemon, param) {
+  await Pokemon.findOneAndUpdate({ _id: pokemon._id }, {$set: param},function(err, doc){
+    if(err){
+      console.log("Something wrong when updating data!");
+    }
   });
 };
