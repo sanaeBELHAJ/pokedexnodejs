@@ -18,17 +18,27 @@ app.listen(3000, function() {
   );
 });
 
+/******** POKEMONS **********/
+
 //Liste de tous les pokemons en BDD
 app.get("/pokemons", async function(req, res) {
   res.json(JSON.parse(JSON.stringify(await crud.findAll())));
 });
 
-//Récupérer les infos d'un pokemon
-app.get("/pokemons/:search", async function(req, res) {
-  var pokemon = await getPkm(req.params.search);
+//Récupérer la liste de tous les pokemons sur Internet
+app.get("/bringPokemons", async function(req, res) {
+  //Renouvellement de la BDD
+  let bdd = JSON.parse(JSON.stringify(await crud.findAll()));
+  if (bdd) {
+    bdd.forEach(function(pokemon) {
+      crud.remove(pokemon._id);
+    });
+  }
 
-  if (pokemon == null) res.send("AUCUN POKEMON TROUVE");
-  else res.send(pokemon);
+  //Insertion des nouvelles données via webscraping
+  let liste = JSON.parse(JSON.stringify(await bringPkm.callApi(res)));
+  crud.insertAll(liste);
+  res.json(liste);
 });
 
 //Créer un pokemon
@@ -42,51 +52,36 @@ app.post("/pokemons", async function(req, res) {
   };
 
   //Vérification de l'unicité du nom du pokemon
-  var find = await crud.searchPoke(pokemon.name);
-
+  var find = await crud.findOne(req.params.search);
   if (find == null) {
     if (pokemon.niveau && isNaN(parseInt(pokemon.niveau, 10)))
       res.send("Le niveau doit être un nombre entier");
     else {
       var insert = await crud.insertOne(pokemon);
-      console.log("insert : " + insert);
-
-      if (insert === null) res.send("ERREUR DANS LES PARAMETRES DU POKEMON");
-      else res.send("NOUVEAU POKEMON ENREGISTRE");
+      console.log("insert : "+insert);
     }
   } else res.send("CE POKEMON EXISTE DEJA");
 });
 
-/*
-//Mettre à jour un pokemon
-app.put("/pokemons/:search", async function(req, res) {
-  var pokemon = await getPkm(req.params.search);
-  if (pokemon.pokemon == null) res.send("Pokemon introuvable");
-  else {
-    if (pokemon.pokemon && pokemon.pokemon._id) {
-      if(req.body.niveau && isNaN(parseInt(req.body.niveau, 10)))
-        res.send("Le niveau doit être un nombre");
-      else{
-        crud.update(pokemon.pokemon, req.body);
-        res.send("Pokemon mis à jour");
-      }
-    } 
-    else 
-      res.send("Pokemon introuvable");
-  }
+//Récupérer les infos d'un pokemon
+app.get("/pokemons/:search", async function(req, res) {
+  var pokemon = await crud.findOne(req.params.search);
+  if (pokemon == null) res.send("AUCUN POKEMON TROUVE");
+  else res.send(pokemon);
 });
-*/
 
 //Modifier un pokemon
 app.patch("/pokemons/:search", async function(req, res) {
-  var pokemon = await getPkm(req.params.search);
-  if (pokemon.pokemon == null) res.send("Pokemon introuvable");
+  var pokemon = await crud.findOne(req.params.search);
+  if (pokemon == null) 
+    res.send("Pokemon introuvable");
   else {
-    if (pokemon.pokemon && pokemon.pokemon._id) {
-      if (req.body.niveau && isNaN(parseInt(req.body.niveau, 10)))
+
+    if (pokemon && pokemon._id) {
+      if(req.body.niveau && isNaN(parseInt(req.body.niveau, 10)))
         res.send("Le niveau doit être un nombre");
-      else {
-        crud.update(pokemon.pokemon, req.body);
+      else{
+        crud.update(pokemon, req.body);
         res.send("Pokemon mis à jour");
       }
     } else res.send("Pokemon introuvable");
@@ -95,40 +90,22 @@ app.patch("/pokemons/:search", async function(req, res) {
 
 //Supprimer un pokemon
 app.delete("/pokemons/:search", async function(req, res) {
-  var pokemon = await getPkm(req.params.search);
-
-  if (pokemon == null) res.send("Pokemon introuvable");
+  var pokemon = await crud.findOne(req.params.search);
+  if (pokemon == null) 
+    res.send("Pokemon introuvable");
   else {
     if (pokemon && pokemon._id) {
       crud.remove(pokemon._id);
       res.send("Pokemon supprimé");
-    } else res.send("Pokemon introuvable");
+    } 
+    else 
+    res.send("Pokemon introuvable");
   }
 });
 
-//Récupérer la liste de tous les pokemons sur Internet
-app.get("/bringPokemons", async function(req, res) {
-  //Renouvellement de la BDD
-  let bdd = JSON.parse(JSON.stringify(await crud.findAll()));
-  if (bdd) {
-    bdd.forEach(function(element) {
-      crud.remove(element._id);
-    });
-  }
 
-  //Insertion des nouvelles données via webscraping
-  console.log(await bringPkm.callApi(res));
-//  let liste = JSON.parse(JSON.stringify(await bringPkm.callApi(res)));
-  res.json(liste);
-  crud.insertAll(liste);
-});
+/******** UTILISATEUR ********/
 
-async function getPkm(search) {
-  //Recherche par nom
-  if (isNaN(parseInt(search, 10)))
-    return await crud.searchPoke(search); //Recherche par ID
-  else return await crud.findOne(parseInt(search, 10));
-}
 
 //Créer un utilisateur
 app.post("/users", function(req, res) {
@@ -156,6 +133,7 @@ app.get("/users/:search", async function(req, res) {
   else res.send(u);
 });
 
+
 //Ajouter un pokémon
 app.post("users/:id/pokemons", async function(req, res) {
   console.log("coucou");
@@ -174,3 +152,23 @@ app.post("users/:id/pokemons", async function(req, res) {
   if (u == null) res.send("AUCUN USER TROUVE");
   else res.send(id, u);
 });
+
+/*
+  //Mettre à jour un pokemon
+  app.put("/pokemons/:search", async function(req, res) {
+    var pokemon = await findOne(req.params.search);
+    if (pokemon.pokemon == null) res.send("Pokemon introuvable");
+    else {
+      if (pokemon.pokemon && pokemon.pokemon._id) {
+        if(req.body.niveau && isNaN(parseInt(req.body.niveau, 10)))
+          res.send("Le niveau doit être un nombre");
+        else{
+          crud.update(pokemon.pokemon, req.body);
+          res.send("Pokemon mis à jour");
+        }
+      } 
+      else 
+        res.send("Pokemon introuvable");
+    }
+  });
+*/
