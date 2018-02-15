@@ -1,5 +1,7 @@
+const mongoose = require("mongoose");
+mongoose.connect("mongodb://localhost/pokedex");
 const jwt = require("jsonwebtoken");
-
+const bcrypt = require("bcrypt");
 //Modeles
 const userSchema = mongoose.Schema({
   fullName: {
@@ -23,30 +25,40 @@ const userSchema = mongoose.Schema({
     default: Date.now
   }
 });
+const User = mongoose.model("User", userSchema);
+//console.log(User);
 
-UserSchema.methods.comparePassword = function(password) {
+userSchema.methods.comparePassword = function(password) {
   return bcrypt.compareSync(password, this.has_password);
 };
 
-mongoose.model("User", UserSchema);
-
 //Methodes
-
-exports.register = function(req, res) {
-  var newUser = new User(req.body);
-  newUser.hash_password = bcrypt.hashSync(req.body.password, 10);
+user = {
+  fullName: "sanae belhaj",
+  email: "test@test.com",
+  password: "sanae"
+};
+module.exports.register = function(req) {
+  //newUser.hash_password = bcrypt.hashSync(req.body.password, 10);
+  var newUser = new User({
+    fullName: req.fullName,
+    email: req.email,
+    hash_password: bcrypt.hashSync(req.password, 10)
+  });
+  console.log(newUser);
   newUser.save(function(err, user) {
     if (err) {
-      return res.status(400).send({
-        message: err
-      });
+      console.log("erreur");
+      return err;
     } else {
-      user.hash_password = undefined;
-      return res.json(user);
+      //user.hash_password = undefined;
+      console.log(user);
+      return user;
     }
   });
+  return user;
 };
-
+//register(user);
 exports.sign_in = function(req, res) {
   User.findOne(
     {
@@ -79,3 +91,18 @@ exports.loginRequired = function(req, res) {
   if (req.user) next();
   else return res.status(401).json({ message: "Unauthorized user!" });
 };
+//SELECT ALL USERS
+module.exports.findAll = async function() {
+  const liste = [];
+  await User.find((err, users) => {
+    if (err) console.log(err);
+    users.forEach(function(user) {
+      //console.log(user);
+      liste.push(user);
+    });
+    //return liste;
+  });
+  console.log(liste);
+  return liste;
+};
+//findAll();
