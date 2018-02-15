@@ -1,6 +1,12 @@
 const mongoose = require("mongoose");
 mongoose.connect("mongodb://localhost/pokedex");
 
+//CREER un sous document
+const evolutionsSchema = mongoose.Schema({
+  niveauEvolution: String,
+  evolutionName: String,
+});
+
 const pokemonSchema = mongoose.Schema({
   id: Number,
   idnational: Number,
@@ -9,7 +15,7 @@ const pokemonSchema = mongoose.Schema({
   type2: String,
   niveau: Number,
   img: String,
-  evolutions: mongoose.Schema.Types.Mixed
+  evolutions: [evolutionsSchema]
 });
 
 /* MODELES */
@@ -20,90 +26,59 @@ const Pokemon = mongoose.model("Pokemon", pokemonSchema);
 //INSERT ALL POKEMON
 module.exports.insertAll = function(Pokemons) {
   Pokemons.forEach(function(pokemon) {
-    const p = new Pokemon({
-      idnational: pokemon.id,
-      name: pokemon.name,
-      type: pokemon.type,
-      type2: pokemon.type2,
-      niveau: pokemon.niveau,
-      img: pokemon.img,
-      evolution: pokemon.evolutions
-    });
-
-    p.save();
+    console.log(pokemon.evolutions);
+    Pokemon.create(
+        {
+          idnational: pokemon.id,
+          name: pokemon.name,
+          type: pokemon.type,
+          type2: pokemon.type2,
+          niveau: pokemon.niveau,
+          img: pokemon.img,
+          evolutions: pokemon.evolutions
+        },
+        (err, doc) => {
+          if (err) console.log(err);
+          console.log("client créé", doc);
+        }
+      );
   });
 };
 
 //INSERT ONE POKEMON
 module.exports.insertOne = function(pokemon) {
-  const p = new Pokemon({
-    idnational: pokemon.id,
-    name: pokemon.name,
-    type: pokemon.type,
-    type2: pokemon.type2,
-    niveau: pokemon.niveau,
-    img: pokemon.img
-  });
-  //TODO : mauvais message de retour lors d'une bonne insertion
-  return p.save((err, p) => {
-    if (err) return null;
-    return p;
-  });
+  Pokemon.create(
+    {
+      idnational: pokemon.id,
+      name: pokemon.name,
+      type: pokemon.type,
+      type2: pokemon.type2,
+      niveau: pokemon.niveau,
+      img: pokemon.img
+    },
+    (err, doc) => {
+      if (err) console.log(err);
+      console.log("client créé", doc);
+    }
+  );
 };
 
 //SELECT ALL POKEMON
 module.exports.findAll = async function() {
-  //Liste des pokemons
-  let pokemons = await Pokemon.find((err, pokemons) => {
-    if (err) console.log(err);
-  });
-  const liste = [];
-
-  //Liste des evolutions des pokemons
-  /*const pkm = pokemons.map(async function(pokemon) {
-    var listEvol = [];
-    if(pokemon && pokemon._id){
-      listEvol = await Pokemonevolution.find({ id_pokemon: pokemon._id }, function(err, result){
-                  return result;
-                })
-                .then(async pokevolutions => {
-                  const evolutions = pokevolutions.map(async function(pokeevol){
-                    var info = await Evolution.findOne({ _id: pokeevol.id_evolution }, function(err, doc) {
-                                  return doc;
-                                })
-                                .then(doc => {
-                                  const evolution = {
-                                    niveauEvolution: doc.niveauEvolution,
-                                    evolutionName: doc.evolutionName
-                                  };
-                                  return evolution;
-                                });
-                    return info;
-                  });
-                  return Promise.all(evolutions)
-                })
-                .then(detailsEvol => {
-                  return detailsEvol;
-                });
-    }
-    return {
-      pokemon: pokemon,
-      listEvol : listEvol
-    }
-  });
-  return Promise.all(pkm);*/
+  return await Pokemon.find();
 };
 
-//SELECT ONE POKEMON BY NATIONAL-ID
-module.exports.findOne = async function(id) {
-  let pokemon = await Pokemon.findOne({ idnational: id }).then(pokemon => {
-    return pokemon;
-  });
-
-  return {
-    pokemon: pokemon,
-    listEvol: listEvol
-  };
+//SELECT ONE POKEMON BY NATIONAL-ID OU NAME
+module.exports.findOne = async function(search) {
+  // Rechercher des documents
+  let findId = (isNaN(parseInt(search,10))) ? -1 : parseInt(search,10);
+  return await Pokemon.findOne(
+    { $or: [{ name: search}, {idnational: findId }] },
+    (err, clients) => {
+         if (err) console.log(err);
+      console.log("Resultat du find : ");
+      console.log(clients);
+    });
 };
 //SELECT ONE POKEMON BY ID MONGOOSE
 module.exports.findOne = async function(id) {
@@ -111,11 +86,6 @@ module.exports.findOne = async function(id) {
     return pokemon;
   });
 
-  return {
-    pokemon: pokemon,
-    listEvol: listEvol
-  };
-};
 //SELECT ONE POKEMON BY NAME
 module.exports.searchPoke = async function(name) {
   return await Pokemon.findOne({ name: name }, function(err, doc) {
@@ -136,11 +106,9 @@ module.exports.update = async function(pokemon, param) {
   );
 };
 
-//DELETE POKEMON + EVOLS
+//DELETE POKEMON
 module.exports.remove = async function(id) {
-  console.log(id);
-
-  Pokemon.remove({ _id: id }, function(err) {});
+  Pokemon.remove().where({_id: id});
 };
 
 // const clientSchema = mongoose.Schema({
@@ -171,20 +139,20 @@ module.exports.remove = async function(id) {
 //   console.log(clients);
 // });
 
-// //  CREER un sous documents
-// const addressSchema = mongoose.Schema({
-//   label: String,
-//   rue: String,
-//   ville: String,
-//   cp: Number
-// });
+//  CREER un sous documents
+const addressSchema = mongoose.Schema({
+  label: String,
+  rue: String,
+  ville: String,
+  cp: Number
+});
 
-// const clientSchema = mongoose.Schema({
-//   nom: String,
-//   prenom: String,
-//   age: Number,
-//   address: [addressSchema] // le shema doit se trouver dans un tableau sinon ca ne fonctionne pas
-// });
+const clientSchema = mongoose.Schema({
+  nom: String,
+  prenom: String,
+  age: Number,
+  address: [addressSchema] // le shema doit se trouver dans un tableau sinon ca ne fonctionne pas
+});
 
 // const Client = mongoose.model("Client", clientSchema);
 
