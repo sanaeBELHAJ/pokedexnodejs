@@ -18,7 +18,7 @@ module.exports.callApi = async function(res){
                             let img = "http://www.pokemontrash.com/pokedex/"+pokemon.children("img").attr("src");
                             let type = pokemon.children("span.type1").text();
                             let type2 = (typeof(pokemon.children("span.type2").text()) != undefined) ? pokemon.children("span.type2").text() : "";
-                            let niveau = 0;
+                            let niveau = 1;
 
                             pokemons.push({
                                 id,
