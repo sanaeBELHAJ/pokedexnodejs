@@ -118,7 +118,7 @@ app.get("/bringPokemons", async function(req, res) {
 
   //Insertion des nouvelles données via webscraping
   console.log(await bringPkm.callApi(res));
-//  let liste = JSON.parse(JSON.stringify(await bringPkm.callApi(res)));
+  //  let liste = JSON.parse(JSON.stringify(await bringPkm.callApi(res)));
   res.json(liste);
   crud.insertAll(liste);
 });
@@ -157,20 +157,23 @@ app.get("/users/:search", async function(req, res) {
 });
 
 //Ajouter un pokémon
-app.post("users/:id/pokemons", async function(req, res) {
+app.post("/users/:id/pokemons", async function(req, res) {
   console.log("coucou");
   var u = await user.findOne(req.params.id);
-  var p = crud.findOne(req.body.id_pokemon);
-  var pokemon = [
-    {
-      id: req.body.id_pokemon,
-      niveau: req.body.niveau
-    }
-  ];
-  if (u != null && p != null) {
-    crud.addpokemon(id, pokemon);
+  // var p = crud.findOne(req.body.id_pokemon);
+  var pokemon = {
+    pokemons: [
+      {
+        id: req.body.id_pokemon,
+        niveau: req.body.niveau
+      }
+    ]
+  };
+  if (u != null) {
+    var response = user.addpokemon(req.params.id, pokemon);
+    res.send(response);
   }
-  console.log(u);
+  /* console.log(u);
   if (u == null) res.send("AUCUN USER TROUVE");
-  else res.send(id, u);
+  else res.send(id, u);*/
 });

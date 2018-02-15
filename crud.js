@@ -1,7 +1,6 @@
 const mongoose = require("mongoose");
 mongoose.connect("mongodb://localhost/pokedex");
 
-
 const pokemonSchema = mongoose.Schema({
   id: Number,
   idnational: Number,
@@ -59,7 +58,7 @@ module.exports.findAll = async function() {
     if (err) console.log(err);
   });
   const liste = [];
-  
+
   //Liste des evolutions des pokemons
   /*const pkm = pokemons.map(async function(pokemon) {
     var listEvol = [];
@@ -97,18 +96,26 @@ module.exports.findAll = async function() {
 
 //SELECT ONE POKEMON BY NATIONAL-ID
 module.exports.findOne = async function(id) {
+  let pokemon = await Pokemon.findOne({ idnational: id }).then(pokemon => {
+    return pokemon;
+  });
 
-  let pokemon = await Pokemon.findOne({ idnational: id })
-    .then(pokemon => {
-      return pokemon;
-    });
-  
   return {
     pokemon: pokemon,
     listEvol: listEvol
   };
 };
+//SELECT ONE POKEMON BY ID MONGOOSE
+module.exports.findOne = async function(id) {
+  let pokemon = await Pokemon.findOne({ _id: id }).then(pokemon => {
+    return pokemon;
+  });
 
+  return {
+    pokemon: pokemon,
+    listEvol: listEvol
+  };
+};
 //SELECT ONE POKEMON BY NAME
 module.exports.searchPoke = async function(name) {
   return await Pokemon.findOne({ name: name }, function(err, doc) {
@@ -118,21 +125,23 @@ module.exports.searchPoke = async function(name) {
 
 //UPDATE
 module.exports.update = async function(pokemon, param) {
-  await Pokemon.findOneAndUpdate({ _id: pokemon._id }, {$set: param},function(err, doc){
-    if(err){
-      console.log("Something wrong when updating data!");
+  await Pokemon.findOneAndUpdate(
+    { _id: pokemon._id },
+    { $set: param },
+    function(err, doc) {
+      if (err) {
+        console.log("Something wrong when updating data!");
+      }
     }
-  });
+  );
 };
 
 //DELETE POKEMON + EVOLS
 module.exports.remove = async function(id) {
   console.log(id);
 
-
-  Pokemon.remove({_id: id}, function(err) {});
+  Pokemon.remove({ _id: id }, function(err) {});
 };
-
 
 // const clientSchema = mongoose.Schema({
 //   nom: String,
