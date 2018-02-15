@@ -103,46 +103,45 @@ module.exports.insertOne = function(pokemon) {
 
 //SELECT ALL POKEMON
 module.exports.findAll = async function() {
-  const liste = [];
   //Liste des pokemons
   let pokemons = await Pokemon.find((err, pokemons) => {
     if (err) console.log(err);
   });
-
+  const liste = [];
+  
   //Liste des evolutions des pokemons
-  pokemons.forEach(async function(pokemon) {
-    // const listEvol = [];
-    // Pokemonevolution.find({ id_pokemon: pokemon._id }, (err, evolutions) => {
-    //   if (err) console.log(err);
-    //   //Parcours de chaque évolution pour un pokemon
-    //   evolutions.forEach(async function(pokeevol){
-    //     console.log(listEvol);
-    //     let doc = await Evolution.findOne({ _id: pokeevol.id_evolution }, function(err, doc) {
-    //       //console.log(doc);
-    //       //return doc;
-    //     })
-    //     .then(doc => {
-    //       const evolution = {
-    //         niveauEvolution: doc.niveauEvolution,
-    //         evolutionName: doc.evolutionName
-    //       };
-    //       console.log(evolution);
-    //       listEvol.push(evolution);
-    //       return listEvol;
-    //     });
-    //     console.log(listEvol);
-    //   });
-    //   //console.log(listEvol);
-    //   return listEvol;
-    // });
-    // const poke = {
-    //   pokemon,
-    //   listEvol
-    // };
-    // liste.push(poke);
+  const pkm = pokemons.map(async function(pokemon) {
+    var listEvol = [];
+    if(pokemon && pokemon._id){
+      listEvol = await Pokemonevolution.find({ id_pokemon: pokemon._id }, function(err, result){
+                  return result;
+                })
+                .then(async pokevolutions => {
+                  const evolutions = pokevolutions.map(async function(pokeevol){
+                    var info = await Evolution.findOne({ _id: pokeevol.id_evolution }, function(err, doc) {
+                                  return doc;
+                                })
+                                .then(doc => {
+                                  const evolution = {
+                                    niveauEvolution: doc.niveauEvolution,
+                                    evolutionName: doc.evolutionName
+                                  };
+                                  return evolution;
+                                });
+                    return info;
+                  });
+                  return Promise.all(evolutions)
+                })
+                .then(detailsEvol => {
+                  return detailsEvol;
+                });
+    }
+    return {
+      pokemon: pokemon,
+      listEvol : listEvol
+    }
   });
-
-  return liste;
+  return Promise.all(pkm);
 };
 
 //SELECT ONE POKEMON BY NATIONAL-ID
@@ -195,6 +194,15 @@ module.exports.searchPoke = async function(name) {
   });
 };
 
+//UPDATE
+module.exports.update = async function(pokemon, param) {
+  await Pokemon.findOneAndUpdate({ _id: pokemon._id }, {$set: param},function(err, doc){
+    if(err){
+      console.log("Something wrong when updating data!");
+    }
+  });
+};
+
 //DELETE POKEMON + EVOLS
 module.exports.remove = async function(id) {
   console.log(id);
@@ -216,12 +224,5 @@ module.exports.remove = async function(id) {
 
   Pokemon.remove({ _id: id }, function(err) {
     //console.log('pokemon supprimé')
-  });
-};
-
-//UPDATE
-module.exports.update = function(id, param) {
-  Pokemon.update({ param }, function(pokemon) {
-    console.log("updated");
   });
 };
