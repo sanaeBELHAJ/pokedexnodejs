@@ -129,9 +129,7 @@ app.get("/users/:search", async function(req, res) {
 
 //Ajouter un pokémon à un utilisateur
 app.post("/users/:id/pokemons", async function(req, res) {
-  console.log("coucou");
   var u = await user.findOne(req.params.id);
-  //console.log(u.pokemons.id);
   listpokemon = [];
   if (u != null) {
     u.pokemons.forEach(function(pokemon) {
@@ -142,34 +140,51 @@ app.post("/users/:id/pokemons", async function(req, res) {
         });
       } else {
         console.log("pokemon existe deja");
-        // console.log(pokemon.id);
       }
     });
-
     newpokemon = {
       id: req.body.id_pokemon,
       niveau: req.body.niveau
     };
-    if (listpokemon != null) {
-      listpokemon.push(newpokemon);
-      var pokemon = {
-        pokemons: listpokemon
-      };
-      var response = user.addpokemon(req.params.id, pokemon);
-      res.send(response);
-    } else {
-      res.send("pokemon existe déja dans la liste");
-      console.log(u.pokemons);
-    }
+    listpokemon.push(newpokemon);
+    var pokemon = {
+      pokemons: listpokemon
+    };
+    var response = user.addpokemon(req.params.id, pokemon);
+    res.send(response);
   }
   console.log(u);
 });
 //liste tous les pokemons d'un utilisateur
-app.get("users/:id/pokemons", async function(req, res) {});
+app.get("/users/:id/pokemons", async function(req, res) {});
 //lister un pokemon d'un utilisateur
-app.get("users/:id/pokemons/:id", async function(req, res) {});
+app.get("/users/:id/pokemons/:id", async function(req, res) {});
 //Modifier un pokemon d'un utilisateur(son niveau)
-app.put("users/:id/pokemons/:id", async function(req, res) {});
+app.put("/users/:id/pokemons/:idpokemon", async function(req, res) {
+  var u = await user.findOne(req.params.id);
+  listpokemon = [];
+  if (u != null) {
+    u.pokemons.forEach(function(pokemon) {
+      if (pokemon.id != req.params.idpokemon) {
+        listpokemon.push({
+          id: pokemon.id,
+          niveau: pokemon.niveau
+        });
+      }
+    });
+    newpokemon = {
+      id: req.params.idpokemon,
+      niveau: req.body.niveau
+    };
+    listpokemon.push(newpokemon);
+    var pokemon = {
+      pokemons: listpokemon
+    };
+    var response = user.addpokemon(req.params.id, pokemon);
+    res.send(response);
+  }
+  console.log(u);
+});
 //Supprimer un pokemon de la liste des pokemons d'un utilisateur
 app.put("users/:id/pokemons/:id", async function(req, res) {});
 /*
