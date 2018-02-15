@@ -58,7 +58,7 @@ app.post("/pokemons", async function(req, res) {
       res.send("Le niveau doit être un nombre entier");
     else {
       var insert = await crud.insertOne(pokemon);
-      console.log("insert : "+insert);
+      console.log("insert : " + insert);
     }
   } else res.send("CE POKEMON EXISTE DEJA");
 });
@@ -73,14 +73,12 @@ app.get("/pokemons/:search", async function(req, res) {
 //Modifier un pokemon
 app.patch("/pokemons/:search", async function(req, res) {
   var pokemon = await crud.findOne(req.params.search);
-  if (pokemon == null) 
-    res.send("Pokemon introuvable");
+  if (pokemon == null) res.send("Pokemon introuvable");
   else {
-
     if (pokemon && pokemon._id) {
-      if(req.body.niveau && isNaN(parseInt(req.body.niveau, 10)))
+      if (req.body.niveau && isNaN(parseInt(req.body.niveau, 10)))
         res.send("Le niveau doit être un nombre");
-      else{
+      else {
         crud.update(pokemon, req.body);
         res.send("Pokemon mis à jour");
       }
@@ -91,21 +89,16 @@ app.patch("/pokemons/:search", async function(req, res) {
 //Supprimer un pokemon
 app.delete("/pokemons/:search", async function(req, res) {
   var pokemon = await crud.findOne(req.params.search);
-  if (pokemon == null) 
-    res.send("Pokemon introuvable");
+  if (pokemon == null) res.send("Pokemon introuvable");
   else {
     if (pokemon && pokemon._id) {
       crud.remove(pokemon._id);
       res.send("Pokemon supprimé");
-    } 
-    else 
-    res.send("Pokemon introuvable");
+    } else res.send("Pokemon introuvable");
   }
 });
 
-
 /******** UTILISATEUR ********/
-
 
 //Créer un utilisateur
 app.post("/users", function(req, res) {
@@ -133,24 +126,41 @@ app.get("/users/:search", async function(req, res) {
   else res.send(u);
 });
 
-
 //Ajouter un pokémon
 app.post("/users/:id/pokemons", async function(req, res) {
   console.log("coucou");
   var u = await user.findOne(req.params.id);
-  // var p = crud.findOne(req.body.id_pokemon);
-  var pokemon = {
-    pokemons: [
-      {
-        id: req.body.id_pokemon,
-        niveau: req.body.niveau
-      }
-    ]
-  };
+  //console.log(u.pokemons.id);
+  listpokemon = [];
   if (u != null) {
-    var response = user.addpokemon(req.params.id, pokemon);
-    res.send(response);
+    u.pokemons.forEach(function(pokemon) {
+      if (pokemon.id != req.body.id_pokemon) {
+        listpokemon.push({
+          id: pokemon.id,
+          niveau: pokemon.niveau
+        });
+      } else {
+        console.log("pokemon existe deja");
+        // console.log(pokemon.id);
+      }
+    });
+    newpokemon = {
+      id: req.body.id_pokemon,
+      niveau: req.body.niveau
+    };
+    if (listpokemon != null) {
+      listpokemon.push(newpokemon);
+      var pokemon = {
+        pokemons: listpokemon
+      };
+      var response = user.addpokemon(req.params.id, pokemon);
+      res.send(response);
+    } else {
+      res.send("pokemon existe déja dans la liste");
+      console.log(u.pokemons);
+    }
   }
+  console.log(u);
   /* console.log(u);
   if (u == null) res.send("AUCUN USER TROUVE");
   else res.send(id, u);*/

@@ -126,9 +126,9 @@ module.exports.findAll = async function() {
 module.exports.findOne = async function(id) {
   try {
     let user = await User.findOne({ _id: id }).then(user => {
-      console.log(user);
       return user;
     });
+    return user;
   } catch (err) {
     return err;
   }

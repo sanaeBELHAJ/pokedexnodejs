@@ -4,7 +4,7 @@ mongoose.connect("mongodb://localhost/pokedex");
 //CREER un sous document
 const evolutionsSchema = mongoose.Schema({
   niveauEvolution: String,
-  evolutionName: String,
+  evolutionName: String
 });
 
 const pokemonSchema = mongoose.Schema({
@@ -28,20 +28,20 @@ module.exports.insertAll = function(Pokemons) {
   Pokemons.forEach(function(pokemon) {
     console.log(pokemon.evolutions);
     Pokemon.create(
-        {
-          idnational: pokemon.id,
-          name: pokemon.name,
-          type: pokemon.type,
-          type2: pokemon.type2,
-          niveau: pokemon.niveau,
-          img: pokemon.img,
-          evolutions: pokemon.evolutions
-        },
-        (err, doc) => {
-          if (err) console.log(err);
-          console.log("client créé", doc);
-        }
-      );
+      {
+        idnational: pokemon.id,
+        name: pokemon.name,
+        type: pokemon.type,
+        type2: pokemon.type2,
+        niveau: pokemon.niveau,
+        img: pokemon.img,
+        evolutions: pokemon.evolutions
+      },
+      (err, doc) => {
+        if (err) console.log(err);
+        console.log("client créé", doc);
+      }
+    );
   });
 };
 
@@ -71,21 +71,22 @@ module.exports.findAll = async function() {
 //SELECT ONE POKEMON BY NATIONAL-ID OU NAME
 module.exports.findOne = async function(search) {
   // Rechercher des documents
-  let findId = (isNaN(parseInt(search,10))) ? -1 : parseInt(search,10);
+  let findId = isNaN(parseInt(search, 10)) ? -1 : parseInt(search, 10);
   return await Pokemon.findOne(
-    { $or: [{ name: search}, {idnational: findId }] },
+    { $or: [{ name: search }, { idnational: findId }] },
     (err, clients) => {
-         if (err) console.log(err);
+      if (err) console.log(err);
       console.log("Resultat du find : ");
       console.log(clients);
-    });
+    }
+  );
 };
 //SELECT ONE POKEMON BY ID MONGOOSE
-module.exports.findOne = async function(id) {
+module.exports.findOneById = async function(id) {
   let pokemon = await Pokemon.findOne({ _id: id }).then(pokemon => {
     return pokemon;
   });
-
+};
 //SELECT ONE POKEMON BY NAME
 module.exports.searchPoke = async function(name) {
   return await Pokemon.findOne({ name: name }, function(err, doc) {
@@ -108,7 +109,7 @@ module.exports.update = async function(pokemon, param) {
 
 //DELETE POKEMON
 module.exports.remove = async function(id) {
-  Pokemon.remove().where({_id: id});
+  Pokemon.remove().where({ _id: id });
 };
 
 // const clientSchema = mongoose.Schema({
