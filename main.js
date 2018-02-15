@@ -13,7 +13,9 @@ app.get("/", function(req, res) {
 });
 
 app.listen(3000, function() {
-  console.log("***************Démarrage de l'application sur le port 3000!***************");
+  console.log(
+    "***************Démarrage de l'application sur le port 3000!***************"
+  );
 });
 
 //Liste de tous les pokemons en BDD
@@ -44,13 +46,11 @@ app.post("/pokemons", async function(req, res) {
 
   if (find == null) {
     var insert = await crud.insertOne(pokemon);
-    console.log("insert : "+insert);
-    
-    if(!insert) res.send("ERREUR DANS LES PARAMETRES DU POKEMON");
+    console.log("insert : " + insert);
+
+    if (!insert) res.send("ERREUR DANS LES PARAMETRES DU POKEMON");
     else res.send("NOUVEAU POKEMON ENREGISTRE");
-  }
-  else
-    res.send("CE POKEMON EXISTE DEJA");
+  } else res.send("CE POKEMON EXISTE DEJA");
 });
 
 //Mettre à jour un pokemon
@@ -108,17 +108,15 @@ app.get("/bringPokemons", async function(req, res) {
   crud.insertAll(liste);
 });
 
-async function getPkm(search){
+async function getPkm(search) {
   //Recherche par nom
-  if(isNaN(parseInt(search,10)))
-    return await crud.searchPoke(search); 
-  else //Recherche par ID
-    return await crud.findOne(parseInt(search,10));
+  if (isNaN(parseInt(search, 10)))
+    return await crud.searchPoke(search); //Recherche par ID
+  else return await crud.findOne(parseInt(search, 10));
 }
 
 //Créer un utilisateur
 app.post("/users", function(req, res) {
-  console.log("coucou");
   const u = {
     fullName: req.body.fullName,
     email: req.body.email,
@@ -128,10 +126,17 @@ app.post("/users", function(req, res) {
   var insert = user.register(u);
   res.send("insert : " + u);
 });
-//Créer un utilisateur
+//afficher tous les utilisateurs
 app.get("/users", async function(req, res) {
-  console.log("coucou");
   var users = await user.findAll();
   res.send(users);
   // console.log(users);
+});
+
+//Récupérer les infos d'un user
+app.get("/users/:search", async function(req, res) {
+  var u = await user.findOne(req.params.search);
+  console.log(u);
+  if (u == null) res.send("AUCUN USER TROUVE");
+  else res.send(u);
 });

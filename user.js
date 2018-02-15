@@ -67,18 +67,22 @@ exports.sign_in = function(req, res) {
     function(err, user) {
       if (err) throw err;
       if (!user)
-        res
-          .status(401)
-          .json({ message: "Authentication failed. User not found." });
+        res.status(401).json({
+          message: "Authentication failed. User not found."
+        });
       else if (user) {
         if (!user.comparePassword(req.body.password))
-          res
-            .status(401)
-            .json({ message: "Authentication failed. Wrong password." });
+          res.status(401).json({
+            message: "Authentication failed. Wrong password."
+          });
         else
           return res.json({
             token: jwt.sign(
-              { email: user.email, fullName: user.fullName, _id: user._id },
+              {
+                email: user.email,
+                fullName: user.fullName,
+                _id: user._id
+              },
               "RESTFULAPIs"
             )
           });
@@ -89,20 +93,28 @@ exports.sign_in = function(req, res) {
 
 exports.loginRequired = function(req, res) {
   if (req.user) next();
-  else return res.status(401).json({ message: "Unauthorized user!" });
+  else
+    return res.status(401).json({
+      message: "Unauthorized user!"
+    });
 };
 //SELECT ALL USERS
 module.exports.findAll = async function() {
-  const liste = [];
-  await User.find((err, users) => {
-    if (err) console.log(err);
-    users.forEach(function(user) {
-      //console.log(user);
-      liste.push(user);
+  try {
+    return await User.find({});
+  } catch (err) {
+    return err;
+  }
+};
+module.exports.findOne = async function(id) {
+  try {
+    let user = await User.findOne({ _id: id }).then(user => {
+      console.log(user);
+      return user;
     });
-    //return liste;
-  });
-  console.log(liste);
-  return liste;
+  } catch (err) {
+    return err;
+  }
+  return user;
 };
 //findAll();
