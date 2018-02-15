@@ -45,18 +45,16 @@ app.post("/pokemons", async function(req, res) {
   var find = await crud.searchPoke(pokemon.name);
 
   if (find == null) {
-    if(pokemon.niveau && isNaN(parseInt(pokemon.niveau, 10)))
+    if (pokemon.niveau && isNaN(parseInt(pokemon.niveau, 10)))
       res.send("Le niveau doit être un nombre entier");
-    else{
+    else {
       var insert = await crud.insertOne(pokemon);
-      console.log("insert : "+insert);
-      
-      if(insert === null) res.send("ERREUR DANS LES PARAMETRES DU POKEMON");
+      console.log("insert : " + insert);
+
+      if (insert === null) res.send("ERREUR DANS LES PARAMETRES DU POKEMON");
       else res.send("NOUVEAU POKEMON ENREGISTRE");
     }
-  }
-  else
-    res.send("CE POKEMON EXISTE DEJA");
+  } else res.send("CE POKEMON EXISTE DEJA");
 });
 
 /*
@@ -85,15 +83,13 @@ app.patch("/pokemons/:search", async function(req, res) {
   if (pokemon.pokemon == null) res.send("Pokemon introuvable");
   else {
     if (pokemon.pokemon && pokemon.pokemon._id) {
-      if(req.body.niveau && isNaN(parseInt(req.body.niveau, 10)))
+      if (req.body.niveau && isNaN(parseInt(req.body.niveau, 10)))
         res.send("Le niveau doit être un nombre");
-      else{
+      else {
         crud.update(pokemon.pokemon, req.body);
         res.send("Pokemon mis à jour");
       }
-    } 
-    else 
-      res.send("Pokemon introuvable");
+    } else res.send("Pokemon introuvable");
   }
 });
 
@@ -157,4 +153,23 @@ app.get("/users/:search", async function(req, res) {
   console.log(u);
   if (u == null) res.send("AUCUN USER TROUVE");
   else res.send(u);
+});
+
+//Ajouter un pokémon
+app.post("users/:id/pokemons", async function(req, res) {
+  console.log("coucou");
+  var u = await user.findOne(req.params.id);
+  var p = crud.findOne(req.body.id_pokemon);
+  var pokemon = [
+    {
+      id: req.body.id_pokemon,
+      niveau: req.body.niveau
+    }
+  ];
+  if (u != null && p != null) {
+    crud.addpokemon(id, pokemon);
+  }
+  console.log(u);
+  if (u == null) res.send("AUCUN USER TROUVE");
+  else res.send(id, u);
 });

@@ -20,6 +20,7 @@ const userSchema = mongoose.Schema({
     type: String,
     required: true
   },
+  pokemons: Array,
   created: {
     type: Date,
     default: Date.now
@@ -58,6 +59,18 @@ module.exports.register = function(req) {
   });
   return user;
 };
+
+module.exports.addpokemon = async function(id, param) {
+  //newUser.hash_password = bcrypt.hashSync(req.body.password, 10);
+  await User.findOneAndUpdate({ _id: id }, { $set: param }, function(err, doc) {
+    if (err) {
+      console.log("Something wrong when updating data!");
+    }
+  });
+  return user;
+};
+
+//adpokemon(12, []);
 //register(user);
 exports.sign_in = function(req, res) {
   User.findOne(

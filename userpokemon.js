@@ -21,22 +21,28 @@ const Userpokemon = mongoose.model("Userpokemon", userpokemonSchema);
 
 function add(id_pokemon, id_user) {
   var pokemon = crud.findOne(parseInt(id_pokemon, 10));
-  var u = await user.findOne(req.params.search);
-  
+  var u = user.findOne(id_user);
+
   if (pokemon != null && u != null) {
     const up = new Userpokemon({
       id_pokemon: pokemon.id_pokemon,
-      id_user: pokemon.id_user,
+      id_user: pokemon.id_user
     });
     up.save().then(up => {
       return "pokemon added!";
-    }
-    );
+    });
   }
 }
-add("","5a8542c15f5f3b3b3c877d9b");
+function findAll() {
+  try {
+    var relations = Userpokemon.find({});
+    console.log(relations);
+    //return await Userpokemon.find({});
+  } catch (err) {
+    return err;
+  }
+}
 
+add("5a83f8ec452382091022124c", "5a8542c15f5f3b3b3c877d9b");
 
-
-
-console.log(userpokemon);
+//console.log(userpokemon);
