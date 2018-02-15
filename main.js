@@ -16,7 +16,6 @@ app.listen(3000, function() {
   console.log("Example app listening on port 3000!");
 });
 
-
 //Liste de tous les pokemons en BDD
 app.get("/pokemons", async function(req, res) {
   res.json(JSON.stringify(await crud.findAll()));
@@ -25,20 +24,16 @@ app.get("/pokemons", async function(req, res) {
 
 //Récupérer les infos d'un pokemon
 app.get("/pokemons/:search", async function(req, res) {
-  if(typeof req.params.search === "number")
-    var find = await crud.findOne(req.params.search, res);  
-  else
-    var find = await crud.searchPoke(req.params.search); 
+  if (typeof req.params.search === "number")
+    var find = await crud.findOne(req.params.search, res);
+  else var find = await crud.searchPoke(req.params.search);
 
-  if(find == null)
-    res.send("AUCUN POKEMON TROUVE");
-  else
-    res.send(find);
+  if (find == null) res.send("AUCUN POKEMON TROUVE");
+  else res.send(find);
 });
 
 //Créer un pokemon
 app.post("/pokemons", async function(req, res) {
-
   const pokemon = {
     name: req.body.name,
     type: req.body.type,
@@ -46,21 +41,17 @@ app.post("/pokemons", async function(req, res) {
     niveau: req.body.niveau,
     img: req.body.img
   };
-  
-  var find = await crud.searchPoke(pokemon.name); 
-  console.log("find : "+find);
-  
-  if(find == null){
+
+  var find = await crud.searchPoke(pokemon.name);
+  console.log("find : " + find);
+
+  if (find == null) {
     var insert = await crud.insertOne(pokemon);
-    console.log("insert : "+insert);
-    
-    if(insert)
-      res.send("NOUVEAU POKEMON ENREGISTRE");
-    else 
-      res.send("ERREUR DANS LES PARAMETRES DU POKEMON");
-  }
-  else
-    res.send("CE POKEMON EXISTE DEJA");
+    console.log("insert : " + insert);
+
+    if (insert) res.send("NOUVEAU POKEMON ENREGISTRE");
+    else res.send("ERREUR DANS LES PARAMETRES DU POKEMON");
+  } else res.send("CE POKEMON EXISTE DEJA");
 });
 
 //Mettre à jour un pokemon
