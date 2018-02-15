@@ -192,6 +192,15 @@ module.exports.searchPoke = async function(name) {
   });
 };
 
+//UPDATE
+module.exports.update = async function(pokemon, param) {
+  await Pokemon.findOneAndUpdate({ _id: pokemon._id }, {$set: param},function(err, doc){
+    if(err){
+      console.log("Something wrong when updating data!");
+    }
+  });
+};
+
 //DELETE POKEMON + EVOLS
 module.exports.remove = async function(id) {
   console.log(id);
@@ -215,14 +224,5 @@ module.exports.remove = async function(id) {
 
   Pokemon.remove({_id: id}, function(err) { 
     //console.log('pokemon supprimé') 
-  });
-};
-
-//UPDATE
-module.exports.update = async function(pokemon, param) {
-  await Pokemon.findOneAndUpdate({ _id: pokemon._id }, {$set: param},function(err, doc){
-    if(err){
-      console.log("Something wrong when updating data!");
-    }
   });
 };

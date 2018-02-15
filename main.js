@@ -53,6 +53,7 @@ app.post("/pokemons", async function(req, res) {
     res.send("CE POKEMON EXISTE DEJA");
 });
 
+/*
 //Mettre à jour un pokemon
 app.put("/pokemons/:search", async function(req, res) {
   var pokemon = await getPkm(req.params.search);
@@ -70,6 +71,7 @@ app.put("/pokemons/:search", async function(req, res) {
       res.send("Pokemon introuvable");
   }
 });
+*/
 
 //Modifier un pokemon
 app.patch("/pokemons/:search", async function(req, res) {
