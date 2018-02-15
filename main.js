@@ -186,7 +186,25 @@ app.put("/users/:id/pokemons/:idpokemon", async function(req, res) {
   console.log(u);
 });
 //Supprimer un pokemon de la liste des pokemons d'un utilisateur
-app.put("users/:id/pokemons/:id", async function(req, res) {});
+app.delete("/users/:id/pokemons/:idpokemon", async function(req, res) {
+  var u = await user.findOne(req.params.id);
+  listpokemon = [];
+  if (u != null) {
+    u.pokemons.forEach(function(pokemon) {
+      if (pokemon.id != req.params.idpokemon) {
+        listpokemon.push({
+          id: pokemon.id,
+          niveau: pokemon.niveau
+        });
+      }
+    });
+    var pokemon = {
+      pokemons: listpokemon
+    };
+    var response = user.addpokemon(req.params.id, pokemon);
+    res.send(response);
+  }
+});
 /*
   //Mettre à jour un pokemon
   app.put("/pokemons/:search", async function(req, res) {
