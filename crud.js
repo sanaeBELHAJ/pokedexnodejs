@@ -141,17 +141,18 @@ module.exports.searchPoke = async function(name) {
 };
 
 //DELETE POKEMON + EVOLS
-module.exports.remove = function(id) {
-  Pokemonevolution.find({ id_pokemon: id }, (err, pokEvolutions) => {
+module.exports.remove = async function(id) {
+  console.log(id);
+  await Pokemonevolution.find({ id_pokemon: id }, (err, pokEvolutions) => {
     if (err) console.log(err);
     console.log(pokEvolutions);
-    /*pokEvolutions.forEach(function(pokEvolution) {
+    pokEvolutions.forEach(function(pokEvolution) {
       Evolution.remove({ _id: pokEvolution.id_evolution }, function(err) {
           if (err) console.log(err);
           console.log("deleted with all his evolution");
         }
       );
-    });*/
+    });
   });
 
   Pokemonevolution.remove({ id_pokemon: id}, function(err) {

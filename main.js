@@ -23,11 +23,7 @@ app.get("/pokemons", async function(req, res) {
 
 //Récupérer les infos d'un pokemon
 app.get("/pokemons/:search", async function(req, res) {
-  //Recherche par nom
-  if(isNaN(parseInt(req.params.search,10)))
-    var pokemon = await crud.searchPoke(req.params.search); 
-  else // Recherche par ID
-    var pokemon = await crud.findOne(parseInt(req.params.search,10)); 
+  var pokemon = await getPkm(req.params.search);
 
   if(pokemon == null) res.send("AUCUN POKEMON TROUVE");
   else res.send(pokemon);
@@ -59,11 +55,7 @@ app.post("/pokemons", async function(req, res) {
 
 //Mettre à jour un pokemon
 app.put("/pokemons/:search", async function(req, res) {
-  //Recherche par nom
-  if(isNaN(parseInt(req.params.search,10)))
-    var pokemon = await crud.searchPoke(req.params.search); 
-  else //Recherche par ID
-    var pokemon = await crud.findOne(parseInt(req.params.search,10));
+  var pokemon = await getPkm(req.params.search);
 
   if(pokemon == null) res.send("Pokemon introuvable");
   else{
@@ -77,11 +69,7 @@ app.put("/pokemons/:search", async function(req, res) {
 
 //Modifier un pokemon
 app.patch("/pokemons/:search", async function(req, res) {
-  //Recherche par nom
-  if(isNaN(parseInt(req.params.search,10)))
-    var pokemon = await crud.searchPoke(req.params.search); 
-  else //Recherche par ID
-    var pokemon = await crud.findOne(parseInt(req.params.search,10));
+  var pokemon = await getPkm(req.params.search);
 
   if(pokemon == null) res.send("Pokemon introuvable");
   else{
@@ -95,11 +83,7 @@ app.patch("/pokemons/:search", async function(req, res) {
 
 //Supprimer un pokemon
 app.delete("/pokemons/:search", async function(req, res) {
-  //Recherche par nom
-  if(isNaN(parseInt(req.params.search,10)))
-    var pokemon = await crud.searchPoke(req.params.search); 
-  else //Recherche par ID
-    var pokemon = await crud.findOne(parseInt(req.params.search,10));
+  var pokemon = await getPkm(req.params.search);
 
   if(pokemon == null) res.send("Pokemon introuvable");
   else{
@@ -126,3 +110,11 @@ app.get("/bringPokemons", async function(req, res) {
   res.json(liste);
   crud.insertAll(liste);
 });
+
+async function getPkm(search){
+  //Recherche par nom
+  if(isNaN(parseInt(search,10)))
+    return await crud.searchPoke(search); 
+  else //Recherche par ID
+    return await crud.findOne(parseInt(search,10));
+}
