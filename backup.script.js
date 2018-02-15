@@ -61,7 +61,7 @@ async function getEvols(pokemons){
                         }); 
         const newPoke = {
             ...item,
-            evolutions: evolutions    
+            evolutions    
         };
         liste.push(newPoke);
         if(i%50==0)

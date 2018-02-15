@@ -13,9 +13,7 @@ app.get("/", function(req, res) {
 });
 
 app.listen(3000, function() {
-  console.log(
-    "***************Démarrage de l'application sur le port 3000!***************"
-  );
+  console.log("***************Démarrage de l'application sur le port 3000!***************");
 });
 
 //Liste de tous les pokemons en BDD
@@ -121,21 +119,22 @@ app.get("/bringPokemons", async function(req, res) {
   }
 
   //Insertion des nouvelles données via webscraping
-  console.log(await bringPkm.callApi(res));
-//  let liste = JSON.parse(JSON.stringify(await bringPkm.callApi(res)));
+  let liste = JSON.parse(JSON.stringify(await bringPkm.callApi(res)));
   res.json(liste);
   crud.insertAll(liste);
 });
 
-async function getPkm(search) {
+async function getPkm(search){
   //Recherche par nom
-  if (isNaN(parseInt(search, 10)))
-    return await crud.searchPoke(search); //Recherche par ID
-  else return await crud.findOne(parseInt(search, 10));
+  if(isNaN(parseInt(search,10)))
+    return await crud.searchPoke(search); 
+  else //Recherche par ID
+    return await crud.findOne(parseInt(search,10));
 }
 
 //Créer un utilisateur
 app.post("/users", function(req, res) {
+  console.log("coucou");
   const u = {
     fullName: req.body.fullName,
     email: req.body.email,
@@ -145,17 +144,11 @@ app.post("/users", function(req, res) {
   var insert = user.register(u);
   res.send("insert : " + u);
 });
-//afficher tous les utilisateurs
+
+//Créer un utilisateur
 app.get("/users", async function(req, res) {
+  console.log("coucou");
   var users = await user.findAll();
   res.send(users);
   // console.log(users);
-});
-
-//Récupérer les infos d'un user
-app.get("/users/:search", async function(req, res) {
-  var u = await user.findOne(req.params.search);
-  console.log(u);
-  if (u == null) res.send("AUCUN USER TROUVE");
-  else res.send(u);
 });
