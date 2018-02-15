@@ -13,7 +13,7 @@ app.get("/", function(req, res) {
 });
 
 app.listen(3000, function() {
-  console.log("Démarrage de l'application sur le port 3000!");
+  console.log("***************Démarrage de l'application sur le port 3000!***************");
 });
 
 //Liste de tous les pokemons en BDD
@@ -46,8 +46,8 @@ app.post("/pokemons", async function(req, res) {
     var insert = await crud.insertOne(pokemon);
     console.log("insert : "+insert);
     
-    if(insert) res.send("NOUVEAU POKEMON ENREGISTRE");
-    else res.send("ERREUR DANS LES PARAMETRES DU POKEMON");
+    if(!insert) res.send("ERREUR DANS LES PARAMETRES DU POKEMON");
+    else res.send("NOUVEAU POKEMON ENREGISTRE");
   }
   else
     res.send("CE POKEMON EXISTE DEJA");
