@@ -4,6 +4,7 @@ const app = express();
 const crud = require("./crud.js");
 const bringPkm = require("./script.js");
 const user = require("./user.js");
+const userpokemon = require("./userpokemon.js");
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -51,7 +52,6 @@ app.post("/pokemons", async function(req, res) {
     niveau: req.body.niveau,
     img: req.body.img
   };
-
   var insert = await crud.insertOne(pokemon,res);
 });
 
@@ -84,9 +84,7 @@ app.delete("/pokemons/:search", async function(req, res) {
   res.send("Pokemon introuvable");
 });
 
-
 /******** UTILISATEUR ********/
-
 
 //Créer un utilisateur
 app.post("/users", function(req, res) {
@@ -114,29 +112,84 @@ app.get("/users/:search", async function(req, res) {
   else res.send(u);
 });
 
-
-//Ajouter un pokémon
+//Ajouter un pokémon à un utilisateur
 app.post("/users/:id/pokemons", async function(req, res) {
-  console.log("coucou");
   var u = await user.findOne(req.params.id);
-  // var p = crud.findOne(req.body.id_pokemon);
-  var pokemon = {
-    pokemons: [
-      {
-        id: req.body.id_pokemon,
-        niveau: req.body.niveau
-      }
-    ]
-  };
+  listpokemon = [];
   if (u != null) {
+    u.pokemons.forEach(function(pokemon) {
+      if (pokemon.id != req.body.id_pokemon) {
+        listpokemon.push({
+          id: pokemon.id,
+          niveau: pokemon.niveau
+        });
+      } else {
+        console.log("pokemon existe deja");
+      }
+    });
+    newpokemon = {
+      id: req.body.id_pokemon,
+      niveau: req.body.niveau
+    };
+    listpokemon.push(newpokemon);
+    var pokemon = {
+      pokemons: listpokemon
+    };
     var response = user.addpokemon(req.params.id, pokemon);
     res.send(response);
   }
-  /* console.log(u);
-  if (u == null) res.send("AUCUN USER TROUVE");
-  else res.send(id, u);*/
+  console.log(u);
 });
-
+//liste tous les pokemons d'un utilisateur
+app.get("/users/:id/pokemons", async function(req, res) {});
+//lister un pokemon d'un utilisateur
+app.get("/users/:id/pokemons/:id", async function(req, res) {});
+//Modifier un pokemon d'un utilisateur(son niveau)
+app.put("/users/:id/pokemons/:idpokemon", async function(req, res) {
+  var u = await user.findOne(req.params.id);
+  listpokemon = [];
+  if (u != null) {
+    u.pokemons.forEach(function(pokemon) {
+      if (pokemon.id != req.params.idpokemon) {
+        listpokemon.push({
+          id: pokemon.id,
+          niveau: pokemon.niveau
+        });
+      }
+    });
+    newpokemon = {
+      id: req.params.idpokemon,
+      niveau: req.body.niveau
+    };
+    listpokemon.push(newpokemon);
+    var pokemon = {
+      pokemons: listpokemon
+    };
+    var response = user.addpokemon(req.params.id, pokemon);
+    res.send(response);
+  }
+  console.log(u);
+});
+//Supprimer un pokemon de la liste des pokemons d'un utilisateur
+app.delete("/users/:id/pokemons/:idpokemon", async function(req, res) {
+  var u = await user.findOne(req.params.id);
+  listpokemon = [];
+  if (u != null) {
+    u.pokemons.forEach(function(pokemon) {
+      if (pokemon.id != req.params.idpokemon) {
+        listpokemon.push({
+          id: pokemon.id,
+          niveau: pokemon.niveau
+        });
+      }
+    });
+    var pokemon = {
+      pokemons: listpokemon
+    };
+    var response = user.addpokemon(req.params.id, pokemon);
+    res.send(response);
+  }
+});
 /*
   //Mettre à jour un pokemon
   app.put("/pokemons/:search", async function(req, res) {
