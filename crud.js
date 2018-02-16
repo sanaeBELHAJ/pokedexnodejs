@@ -151,7 +151,7 @@ module.exports.update = async function(pokemon, param) {
 
 //DELETE POKEMON
 module.exports.remove = async function(id) {
-  Pokemon.remove().where({ _id: id });
+  await Pokemon.remove().where({ _id: id });
 };
 
 // const clientSchema = mongoose.Schema({
