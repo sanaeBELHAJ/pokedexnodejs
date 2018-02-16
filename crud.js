@@ -108,7 +108,7 @@ module.exports.insertOne = async function(pokemon,res) {
 
 //SELECT ALL POKEMON
 module.exports.findAll = async function() {
-  return await Pokemon.find();
+  return await Pokemon.find().sort("idnational");
 };
 
 //SELECT ONE POKEMON BY NATIONAL-ID OU NAME
@@ -141,6 +141,12 @@ module.exports.update = async function(pokemon, param) {
   await Pokemon.findOneAndUpdate(
     { _id: pokemon._id },
     { $set: param },
+    {
+      upsert: true,     
+      'new': true,   
+      runValidators: true,     
+      setDefaultsOnInsert: true
+    },
     function(err, doc) {
       if (err) {
         console.log(err);

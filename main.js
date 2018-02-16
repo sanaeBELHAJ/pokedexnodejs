@@ -90,9 +90,9 @@ app.post("/users", function(req, res) {
     email: req.body.email,
     password: req.body.password
   };
-  console.log(u);
+
   var insert = user.register(u);
-  res.send("insert : " + u);
+  res.send("Création correctement effectuée.");
 });
 
 //afficher tous les utilisateurs

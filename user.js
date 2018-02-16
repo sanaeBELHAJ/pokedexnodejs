@@ -37,20 +37,18 @@ user = {
 };
 
 module.exports.register = function(req) {
-  //newUser.hash_password = bcrypt.hashSync(req.body.password, 10);
   var newUser = new User({
     fullName: req.fullName,
     email: req.email,
     hash_password: bcrypt.hashSync(req.password, 10)
   });
-  console.log(newUser);
+
   newUser.save(function(err, user) {
     if (err) {
       console.log("erreur");
       return err;
     } else {
-      //user.hash_password = undefined;
-      // console.log(user);
+
       return user;
     }
   });
@@ -58,11 +56,9 @@ module.exports.register = function(req) {
 };
 
 module.exports.addpokemon = async function(id, param) {
-  //newUser.hash_password = bcrypt.hashSync(req.body.password, 10);
   let user = await User.findOne({ _id: id }).then(user => {
     return user;
   });
-  //console.log(user);
   await User.findOneAndUpdate({ _id: id }, { $set: param }, function(err, doc) {
     if (err) {
       console.log("Something wrong when adding pokemon!");
