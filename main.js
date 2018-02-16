@@ -52,7 +52,7 @@ app.post("/pokemons", async function(req, res) {
     niveau: req.body.niveau,
     img: req.body.img
   };
-  var insert = await crud.insertOne(pokemon,res);
+  var insert = await crud.insertOne(pokemon, res);
 });
 
 //Récupérer les infos d'un pokemon
@@ -65,12 +65,10 @@ app.get("/pokemons/:search", async function(req, res) {
 //Modifier un pokemon
 app.patch("/pokemons/:search", async function(req, res) {
   var pokemon = await crud.findOne(req.params.search);
-  if(pokemon && pokemon._id) {
+  if (pokemon && pokemon._id) {
     await crud.update(pokemon, req.body);
     res.send("Pokemon mis à jour");
-  } 
-  else 
-    res.send("Pokemon introuvable");
+  } else res.send("Pokemon introuvable");
 });
 
 //Supprimer un pokemon
@@ -79,9 +77,7 @@ app.delete("/pokemons/:search", async function(req, res) {
   if (pokemon && pokemon._id) {
     await crud.remove(pokemon._id);
     res.send("Pokemon supprimé");
-  } 
-  else 
-  res.send("Pokemon introuvable");
+  } else res.send("Pokemon introuvable");
 });
 
 /******** UTILISATEUR ********/
@@ -146,21 +142,38 @@ app.post("/users/:id/pokemons", async function(req, res) {
 //liste tous les pokemons d'un utilisateur
 app.get("/users/:id/pokemons", async function(req, res) {
   var u = await user.findOne(req.params.id);
-  console.log(u);
+  //console.log(u);
   if (u != null) {
-    pokemons = [];
-    await u.pokemons.forEach(function(pokemon) {
+    const pokemons = [];
+    for (pokemon of u.pokemons) {
       console.log(pokemon.id);
-      var p = crud.findOneById(pokemon.id);
+      var p = await crud.findOneById(pokemon.id);
       console.log(p);
       pokemons.push(p);
-    });
+    }
     console.log(pokemons);
     res.send(pokemons);
   }
 });
 //lister un pokemon d'un utilisateur
-app.get("/users/:id/pokemons/:id", async function(req, res) {});
+app.get("/users/:id/pokemons/:idpokemon", async function(req, res) {
+  var u = await user.findOne(req.params.id);
+  if (u != null) {
+    const pokemons = [];
+    for (pokemon of u.pokemons) {
+      if (pokemon.id == req.params.idpokemon) {
+        var p = await crud.findOneById(pokemon.id);
+        pokemons.push(p);
+      }
+    }
+    console.log(pokemons);
+    if (pokemons != null) {
+      res.send(pokemons);
+    } else {
+      res.send("Pokemon n'existe pas dans la liste de pokemon");
+    }
+  }
+});
 //Modifier un pokemon d'un utilisateur(son niveau)
 app.put("/users/:id/pokemons/:idpokemon", async function(req, res) {
   var u = await user.findOne(req.params.id);
