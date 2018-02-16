@@ -86,6 +86,7 @@ module.exports.findOneById = async function(id) {
   let pokemon = await Pokemon.findOne({ _id: id }).then(pokemon => {
     return pokemon;
   });
+  return pokemon;
 };
 //SELECT ONE POKEMON BY NAME
 module.exports.searchPoke = async function(name) {

@@ -26,7 +26,7 @@ const userSchema = mongoose.Schema({
     default: Date.now
   }
 });
-const User = mongoose.model("User", userSchema);
+User = mongoose.model("User", userSchema);
 //console.log(User);
 
 userSchema.methods.comparePassword = function(password) {
@@ -133,5 +133,12 @@ module.exports.findOne = async function(id) {
     return err;
   }
   return user;
+};
+
+module.exports.findAllPokemon = async function(id) {
+  let user = await User.findOne({ _id: id })
+    .populate("pokemons.id")
+    .exec();
+  console.log(user);
 };
 //findAll();

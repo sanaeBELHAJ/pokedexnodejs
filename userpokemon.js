@@ -5,9 +5,11 @@ const mongoose = require("mongoose");
 mongoose.connect("mongodb://localhost/pokedex");
 
 //SELECT ALL Pokemons by user
-module.exports.findAll = async function() {
+module.exports.findAllPokemon = async function(id) {
   try {
-    return await User.find({});
+    User.find()
+      .populate("pokemons")
+      .exec((err, users) => console.log(users));
   } catch (err) {
     return err;
   }
