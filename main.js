@@ -114,27 +114,31 @@ app.post("/users/:id/pokemons", async function(req, res) {
   var p = await crud.findOneById(req.body.id_pokemon);
   listpokemon = [];
   if (u != null && p != null) {
-    u.pokemons.forEach(function(pokemon) {
-      if (pokemon.id != req.body.id_pokemon) {
-        listpokemon.push({
-          id: pokemon.id,
-          niveau: pokemon.niveau
-        });
-      } else {
-        console.log("pokemon existe deja");
-      }
-    });
-    newpokemon = {
-      id: req.body.id_pokemon,
-      niveau: req.body.niveau
-    };
-    listpokemon.push(newpokemon);
-    var pokemon = {
-      pokemons: listpokemon
-    };
-    var response = user.addpokemon(req.params.id, pokemon);
-    res.send(response);
-    console.log(u);
+    if (req.body.niveau <= 100) {
+      u.pokemons.forEach(function(pokemon) {
+        if (pokemon.id != req.body.id_pokemon) {
+          listpokemon.push({
+            id: pokemon.id,
+            niveau: pokemon.niveau
+          });
+        } else {
+          console.log("pokemon existe deja");
+        }
+      });
+      newpokemon = {
+        id: req.body.id_pokemon,
+        niveau: req.body.niveau
+      };
+      listpokemon.push(newpokemon);
+      var pokemon = {
+        pokemons: listpokemon
+      };
+      var response = user.addpokemon(req.params.id, pokemon);
+      res.send(response);
+      console.log(u);
+    } else {
+      res.send("le niveau ne doit pas dépasser 100");
+    }
   } else {
     console.log("l'utilisateur ou le pokemon n'existe pas");
   }
@@ -146,9 +150,7 @@ app.get("/users/:id/pokemons", async function(req, res) {
   if (u != null) {
     const pokemons = [];
     for (pokemon of u.pokemons) {
-      console.log(pokemon.id);
       var p = await crud.findOneById(pokemon.id);
-      console.log(p);
       pokemons.push(p);
     }
     console.log(pokemons);
@@ -179,26 +181,32 @@ app.put("/users/:id/pokemons/:idpokemon", async function(req, res) {
   var u = await user.findOne(req.params.id);
   listpokemon = [];
   if (u != null) {
-    u.pokemons.forEach(function(pokemon) {
-      if (pokemon.id != req.params.idpokemon) {
-        listpokemon.push({
-          id: pokemon.id,
-          niveau: pokemon.niveau
-        });
-      }
-    });
-    newpokemon = {
-      id: req.params.idpokemon,
-      niveau: req.body.niveau
-    };
-    listpokemon.push(newpokemon);
-    var pokemon = {
-      pokemons: listpokemon
-    };
-    var response = user.addpokemon(req.params.id, pokemon);
-    res.send(response);
+    if (req.body.niveau <= 100) {
+      u.pokemons.forEach(function(pokemon) {
+        if (pokemon.id != req.params.idpokemon) {
+          listpokemon.push({
+            id: pokemon.id,
+            niveau: pokemon.niveau
+          });
+        }
+      });
+      newpokemon = {
+        id: req.params.idpokemon,
+        niveau: req.body.niveau
+      };
+      listpokemon.push(newpokemon);
+      var pokemon = {
+        pokemons: listpokemon
+      };
+      var response = user.addpokemon(req.params.id, pokemon);
+      res.send(response);
+      console.log(u);
+    } else {
+      res.send("Le niveau ne doit pas dépasser 100");
+    }
+  } else {
+    console.log("l'utilisateur n'existe pas");
   }
-  console.log(u);
 });
 //Supprimer un pokemon de la liste des pokemons d'un utilisateur
 app.delete("/users/:id/pokemons/:idpokemon", async function(req, res) {
