@@ -38,30 +38,21 @@ app.get("/bringPokemons", async function(req, res) {
 
   //Insertion des nouvelles données via webscraping
   let liste = JSON.parse(JSON.stringify(await bringPkm.callApi(res)));
-  crud.insertAll(liste);
+  crud.insertAll(liste, res);
   res.json(liste);
 });
 
 //Créer un pokemon
 app.post("/pokemons", async function(req, res) {
   const pokemon = {
+    idnational: req.body.idnational,
     name: req.body.name,
     type: req.body.type,
     type2: req.body.type2,
     niveau: req.body.niveau,
     img: req.body.img
   };
-
-  //Vérification de l'unicité du nom du pokemon
-  var find = await crud.findOne(req.params.search);
-  if (find == null) {
-    if (pokemon.niveau && isNaN(parseInt(pokemon.niveau, 10)))
-      res.send("Le niveau doit être un nombre entier");
-    else {
-      var insert = await crud.insertOne(pokemon);
-      console.log("insert : " + insert);
-    }
-  } else res.send("CE POKEMON EXISTE DEJA");
+  var insert = await crud.insertOne(pokemon,res);
 });
 
 //Récupérer les infos d'un pokemon
@@ -74,29 +65,23 @@ app.get("/pokemons/:search", async function(req, res) {
 //Modifier un pokemon
 app.patch("/pokemons/:search", async function(req, res) {
   var pokemon = await crud.findOne(req.params.search);
-  if (pokemon == null) res.send("Pokemon introuvable");
-  else {
-    if (pokemon && pokemon._id) {
-      if (req.body.niveau && isNaN(parseInt(req.body.niveau, 10)))
-        res.send("Le niveau doit être un nombre");
-      else {
-        crud.update(pokemon, req.body);
-        res.send("Pokemon mis à jour");
-      }
-    } else res.send("Pokemon introuvable");
-  }
+  if(pokemon && pokemon._id) {
+    await crud.update(pokemon, req.body);
+    res.send("Pokemon mis à jour");
+  } 
+  else 
+    res.send("Pokemon introuvable");
 });
 
 //Supprimer un pokemon
 app.delete("/pokemons/:search", async function(req, res) {
   var pokemon = await crud.findOne(req.params.search);
-  if (pokemon == null) res.send("Pokemon introuvable");
-  else {
-    if (pokemon && pokemon._id) {
-      crud.remove(pokemon._id);
-      res.send("Pokemon supprimé");
-    } else res.send("Pokemon introuvable");
-  }
+  if (pokemon && pokemon._id) {
+    await crud.remove(pokemon._id);
+    res.send("Pokemon supprimé");
+  } 
+  else 
+  res.send("Pokemon introuvable");
 });
 
 /******** UTILISATEUR ********/
