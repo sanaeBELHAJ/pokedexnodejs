@@ -27,32 +27,22 @@ const userSchema = mongoose.Schema({
   }
 });
 User = mongoose.model("User", userSchema);
-//console.log(User);
 
 //Methodes
-user = {
-  fullName: "sanae belhaj",
-  email: "test@test.com",
-  password: "sanae"
-};
-
-module.exports.register = function(req) {
+module.exports.register = async function(req) {
   var newUser = new User({
     fullName: req.fullName,
     email: req.email,
     hash_password: bcrypt.hashSync(req.password, 10)
   });
 
-  newUser.save(function(err, user) {
+  return await newUser.save(function(err, user) {
     if (err) {
       console.log("erreur");
       return err;
-    } else {
-
-      return user;
     }
+    return user;
   });
-  return user;
 };
 
 module.exports.addpokemon = async function(id, param) {
@@ -131,4 +121,3 @@ module.exports.findAllPokemon = async function(id) {
     .exec();
   console.log(user);
 };
-//findAll();

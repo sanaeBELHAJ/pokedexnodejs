@@ -128,8 +128,9 @@ app.post("/users/:id/pokemons", verifyToken, async function(req, res) {
             id: pokemon.id,
             niveau: pokemon.niveau
           });
-        } else {
-          console.log("pokemon existe deja");
+        } 
+        else {
+          res.send("pokemon existe deja");
         }
       });
       newpokemon = {
@@ -143,12 +144,12 @@ app.post("/users/:id/pokemons", verifyToken, async function(req, res) {
       var response = user.addpokemon(req.params.id, pokemon);
       res.send(response);
       console.log(u);
-    } else {
+    } 
+    else
       res.send("le niveau ne doit pas dépasser 100");
-    }
-  } else {
-    console.log("l'utilisateur ou le pokemon n'existe pas");
-  }
+  } 
+  else
+    res.send("l'utilisateur ou le pokemon n'existe pas");
 });
 
 //liste tous les pokemons d'un utilisateur
@@ -211,12 +212,12 @@ app.put("/users/:id/pokemons/:idpokemon", verifyToken, async function(req, res) 
       var response = user.addpokemon(req.params.id, pokemon);
       res.send(response);
       console.log(u);
-    } else {
+    } 
+    else
       res.send("Le niveau ne doit pas dépasser 100");
-    }
-  } else {
-    console.log("l'utilisateur n'existe pas");
-  }
+  } 
+  else
+    res.send("l'utilisateur n'existe pas");
 });
 
 //Supprimer un pokemon de la liste des pokemons d'un utilisateur
@@ -277,12 +278,8 @@ function verifyToken(req, res, next) {
     jwt.verify(req.token, "RESTFULAPIs", (err, authData) => {
       if(err) {
         res.sendStatus(403);
-      } else {
-        res.json({
-          message: 'TOKEN valide',
-          authData
-        });
-      }
+      } 
+      
     });
     next();
   } 
