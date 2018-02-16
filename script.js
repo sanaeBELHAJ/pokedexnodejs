@@ -15,7 +15,14 @@ module.exports.callApi = async function(res){
 
                             let id = $(element).children("td:first-child").text();
                             let name = pokemon.children("img").attr("alt");
-                            let img = "http://www.pokemontrash.com/pokedex/"+pokemon.children("img").attr("src");
+                            let img = "";
+                            if(id >= 0 && id <= 9)
+                                img = "http://www.pokemontrash.com/pokedex/images/sugimori/00"+id+".png";
+                            else if (id >=10 && id <= 99 )
+                                img = "http://www.pokemontrash.com/pokedex/images/sugimori/0"+id+".png";
+                            else
+                                img = "http://www.pokemontrash.com/pokedex/images/sugimori/"+id+".png";
+                            
                             let type = pokemon.children("span.type1").text();
                             let type2 = (typeof(pokemon.children("span.type2").text()) != undefined) ? pokemon.children("span.type2").text() : "";
                             let niveau = 1;

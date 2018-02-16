@@ -273,7 +273,7 @@ function verifyToken(req, res, next) {
     const bearerToken = bearer[1];
     // Set the token
     req.token = bearerToken;
-    
+
     jwt.verify(req.token, "RESTFULAPIs", (err, authData) => {
       if(err) {
         res.sendStatus(403);
