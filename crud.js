@@ -183,19 +183,19 @@ module.exports.remove = async function(id) {
 // });
 
 //  CREER un sous documents
-const addressSchema = mongoose.Schema({
-  label: String,
-  rue: String,
-  ville: String,
-  cp: Number
-});
+// const addressSchema = mongoose.Schema({
+//   label: String,
+//   rue: String,
+//   ville: String,
+//   cp: Number
+// });
 
-const clientSchema = mongoose.Schema({
-  nom: String,
-  prenom: String,
-  age: Number,
-  address: [addressSchema] // le shema doit se trouver dans un tableau sinon ca ne fonctionne pas
-});
+// const clientSchema = mongoose.Schema({
+//   nom: String,
+//   prenom: String,
+//   age: Number,
+//   address: [addressSchema] // le shema doit se trouver dans un tableau sinon ca ne fonctionne pas
+// });
 
 // const Client = mongoose.model("Client", clientSchema);
 

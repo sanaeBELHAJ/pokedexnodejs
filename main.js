@@ -100,6 +100,11 @@ app.get("/users", async function(req, res) {
   // console.log(users);
 });
 
+//Login d'un user
+app.post("/users/login", async function(req, res) {
+  var u = await user.sign_in(req.body, res);
+});
+
 //Récupérer les infos d'un user
 app.get("/users/:search", async function(req, res) {
   var u = await user.findOne(req.params.search);

@@ -29,16 +29,13 @@ const userSchema = mongoose.Schema({
 User = mongoose.model("User", userSchema);
 //console.log(User);
 
-userSchema.methods.comparePassword = function(password) {
-  return bcrypt.compareSync(password, this.has_password);
-};
-
 //Methodes
 user = {
   fullName: "sanae belhaj",
   email: "test@test.com",
   password: "sanae"
 };
+
 module.exports.register = function(req) {
   //newUser.hash_password = bcrypt.hashSync(req.body.password, 10);
   var newUser = new User({
@@ -74,25 +71,23 @@ module.exports.addpokemon = async function(id, param) {
   return user;
 };
 
-//adpokemon(12, []);
-//register(user);
-exports.sign_in = function(req, res) {
-  User.findOne(
+//LOGIN
+exports.sign_in = function(params, res) {
+  return User.findOne(
     {
-      email: req.body.email
+      email: params.email
     },
     function(err, user) {
-      if (err) throw err;
-      if (!user)
-        res.status(401).json({
-          message: "Authentication failed. User not found."
-        });
-      else if (user) {
-        if (!user.comparePassword(req.body.password))
-          res.status(401).json({
+      if (err) 
+        throw err;
+  
+      if (user) {
+        let isOk = bcrypt.compareSync(""+params.password, user.hash_password);
+        if (!isOk){
+          return res.json({
             message: "Authentication failed. Wrong password."
           });
-        else
+        }else{
           return res.json({
             token: jwt.sign(
               {
@@ -103,6 +98,7 @@ exports.sign_in = function(req, res) {
               "RESTFULAPIs"
             )
           });
+        }
       }
     }
   );
