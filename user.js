@@ -93,7 +93,8 @@ exports.sign_in = function(params, res) {
               {
                 email: user.email,
                 fullName: user.fullName,
-                _id: user._id
+                _id: user._id,
+                expiresInMinutes: 5 // expires in 5 min
               },
               "RESTFULAPIs"
             )
@@ -104,13 +105,7 @@ exports.sign_in = function(params, res) {
   );
 };
 
-exports.loginRequired = function(req, res) {
-  if (req.user) next();
-  else
-    return res.status(401).json({
-      message: "Unauthorized user!"
-    });
-};
+
 //SELECT ALL USERS
 module.exports.findAll = async function() {
   try {
@@ -119,6 +114,8 @@ module.exports.findAll = async function() {
     return err;
   }
 };
+
+//Find a User
 module.exports.findOne = async function(id) {
   try {
     let user = await User.findOne({ _id: id }).then(user => {
@@ -131,6 +128,7 @@ module.exports.findOne = async function(id) {
   return user;
 };
 
+//Find all the pokemon for a user
 module.exports.findAllPokemon = async function(id) {
   let user = await User.findOne({ _id: id })
     .populate("pokemons.id")

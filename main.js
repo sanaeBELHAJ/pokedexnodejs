@@ -5,6 +5,7 @@ const crud = require("./crud.js");
 const bringPkm = require("./script.js");
 const user = require("./user.js");
 const userpokemon = require("./userpokemon.js");
+const jwt = require("jsonwebtoken");
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -93,6 +94,7 @@ app.post("/users", function(req, res) {
   var insert = user.register(u);
   res.send("insert : " + u);
 });
+
 //afficher tous les utilisateurs
 app.get("/users", async function(req, res) {
   var users = await user.findAll();
@@ -106,7 +108,7 @@ app.post("/users/login", async function(req, res) {
 });
 
 //Récupérer les infos d'un user
-app.get("/users/:search", async function(req, res) {
+app.get("/users/:search", verifyToken , async function(req, res) {
   var u = await user.findOne(req.params.search);
   console.log(u);
   if (u == null) res.send("AUCUN USER TROUVE");
@@ -114,7 +116,7 @@ app.get("/users/:search", async function(req, res) {
 });
 
 //Ajouter un pokémon à un utilisateur
-app.post("/users/:id/pokemons", async function(req, res) {
+app.post("/users/:id/pokemons", verifyToken, async function(req, res) {
   var u = await user.findOne(req.params.id);
   var p = await crud.findOneById(req.body.id_pokemon);
   listpokemon = [];
@@ -148,8 +150,9 @@ app.post("/users/:id/pokemons", async function(req, res) {
     console.log("l'utilisateur ou le pokemon n'existe pas");
   }
 });
+
 //liste tous les pokemons d'un utilisateur
-app.get("/users/:id/pokemons", async function(req, res) {
+app.get("/users/:id/pokemons", verifyToken, async function(req, res) {
   var u = await user.findOne(req.params.id);
   //console.log(u);
   if (u != null) {
@@ -162,8 +165,9 @@ app.get("/users/:id/pokemons", async function(req, res) {
     res.send(pokemons);
   }
 });
-//lister un pokemon d'un utilisateur
-app.get("/users/:id/pokemons/:idpokemon", async function(req, res) {
+
+//récupère un pokemon d'un utilisateur
+app.get("/users/:id/pokemons/:idpokemon", verifyToken, async function(req, res) {
   var u = await user.findOne(req.params.id);
   if (u != null) {
     const pokemons = [];
@@ -181,8 +185,9 @@ app.get("/users/:id/pokemons/:idpokemon", async function(req, res) {
     }
   }
 });
+
 //Modifier un pokemon d'un utilisateur(son niveau)
-app.put("/users/:id/pokemons/:idpokemon", async function(req, res) {
+app.put("/users/:id/pokemons/:idpokemon", verifyToken, async function(req, res) {
   var u = await user.findOne(req.params.id);
   listpokemon = [];
   if (u != null) {
@@ -213,8 +218,9 @@ app.put("/users/:id/pokemons/:idpokemon", async function(req, res) {
     console.log("l'utilisateur n'existe pas");
   }
 });
+
 //Supprimer un pokemon de la liste des pokemons d'un utilisateur
-app.delete("/users/:id/pokemons/:idpokemon", async function(req, res) {
+app.delete("/users/:id/pokemons/:idpokemon", verifyToken, async function(req, res) {
   var u = await user.findOne(req.params.id);
   listpokemon = [];
   if (u != null) {
@@ -252,3 +258,37 @@ app.delete("/users/:id/pokemons/:idpokemon", async function(req, res) {
     }
   });
 */
+
+// FORMAT OF TOKEN
+// Authorization: Bearer <access_token>
+// Verify Token
+function verifyToken(req, res, next) {
+  // Get auth header value
+  const bearerHeader = req.headers['authorization'];
+  // Check if bearer is undefined
+  if(typeof bearerHeader !== 'undefined') {
+    // Split at the space
+    const bearer = bearerHeader.split(' ');
+    // Get token from array
+    const bearerToken = bearer[1];
+    // Set the token
+    req.token = bearerToken;
+    
+    jwt.verify(req.token, "RESTFULAPIs", (err, authData) => {
+      if(err) {
+        res.sendStatus(403);
+      } else {
+        res.json({
+          message: 'TOKEN valide',
+          authData
+        });
+      }
+    });
+    next();
+  } 
+  else {
+    console.log('TOKEN absent ou invalide');
+    // Forbidden
+    res.sendStatus(403);
+  }
+}
