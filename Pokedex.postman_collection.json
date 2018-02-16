@@ -1,0 +1,289 @@
+{
+	"id": "f93c1fa0-275d-3bde-21ce-cd892782dadd",
+	"name": "Pokedex",
+	"description": "",
+	"order": [
+		"984cdaba-8b20-a463-81a9-daacbd8ba9ca",
+		"1fd01888-4a09-3ba2-75b1-45569bb2acdf",
+		"929d4710-08aa-fbd6-a06c-ae617a56c4ba",
+		"daf37101-ef61-3787-44b4-e611cf05e817",
+		"d47dcd2b-e973-ea20-970a-68a571a7a860",
+		"3490dc6a-ee47-bf33-3f6e-085f729b0b8b",
+		"eb1c46eb-1494-2a8f-1def-34008a127d29"
+	],
+	"folders": [],
+	"folders_order": [],
+	"timestamp": 1518519877848,
+	"owner": 0,
+	"public": false,
+	"events": [],
+	"variables": [],
+	"auth": null,
+	"requests": [
+		{
+			"id": "1fd01888-4a09-3ba2-75b1-45569bb2acdf",
+			"headers": "",
+			"headerData": [],
+			"url": "http://localhost:3000/pokemons",
+			"queryParams": [],
+			"pathVariables": {},
+			"pathVariableData": [],
+			"events": [],
+			"auth": null,
+			"method": "GET",
+			"collectionId": "f93c1fa0-275d-3bde-21ce-cd892782dadd",
+			"data": null,
+			"dataMode": "params",
+			"name": "/pokemons (all)",
+			"description": "",
+			"descriptionFormat": "html",
+			"time": 1518639425592,
+			"version": 2,
+			"responses": [],
+			"currentHelper": null,
+			"helperAttributes": null
+		},
+		{
+			"id": "3490dc6a-ee47-bf33-3f6e-085f729b0b8b",
+			"headers": "Content-Type: application/x-www-form-urlencoded\n",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/x-www-form-urlencoded",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"url": "http://localhost:3000/pokemons/1",
+			"queryParams": [],
+			"events": [],
+			"pathVariables": {},
+			"pathVariableData": [],
+			"method": "PATCH",
+			"data": [
+				{
+					"key": "idnational",
+					"value": "",
+					"description": "",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "name",
+					"value": "",
+					"description": "",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "type",
+					"value": "",
+					"description": "",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "type2",
+					"value": "",
+					"description": "",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "img",
+					"value": "",
+					"description": "",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "niveau",
+					"value": "",
+					"description": "",
+					"type": "text",
+					"enabled": true
+				}
+			],
+			"dataMode": "urlencoded",
+			"version": 2,
+			"auth": null,
+			"time": 1518735868238,
+			"name": "/pokemons/:id (edit)",
+			"description": "",
+			"collectionId": "f93c1fa0-275d-3bde-21ce-cd892782dadd",
+			"responses": [],
+			"currentHelper": null,
+			"helperAttributes": null
+		},
+		{
+			"id": "929d4710-08aa-fbd6-a06c-ae617a56c4ba",
+			"headers": "",
+			"headerData": [],
+			"url": "http://localhost:3000/pokemons/1",
+			"queryParams": [],
+			"pathVariables": {},
+			"pathVariableData": [],
+			"events": [],
+			"auth": null,
+			"method": "GET",
+			"collectionId": "f93c1fa0-275d-3bde-21ce-cd892782dadd",
+			"data": null,
+			"dataMode": "params",
+			"name": "/pokemons/:id",
+			"description": "",
+			"descriptionFormat": "html",
+			"time": 1518639346979,
+			"version": 2,
+			"responses": [],
+			"currentHelper": null,
+			"helperAttributes": null
+		},
+		{
+			"id": "984cdaba-8b20-a463-81a9-daacbd8ba9ca",
+			"headers": "",
+			"headerData": [],
+			"url": "http://localhost:3000/bringPokemons",
+			"queryParams": [],
+			"pathVariables": {},
+			"pathVariableData": [],
+			"events": [],
+			"auth": null,
+			"method": "GET",
+			"collectionId": "f93c1fa0-275d-3bde-21ce-cd892782dadd",
+			"data": null,
+			"dataMode": "params",
+			"name": "/bringPokemons (web)",
+			"description": "",
+			"descriptionFormat": "html",
+			"time": 1518734181919,
+			"version": 2,
+			"responses": [],
+			"currentHelper": null,
+			"helperAttributes": null
+		},
+		{
+			"id": "d47dcd2b-e973-ea20-970a-68a571a7a860",
+			"headers": "Content-Type: application/x-www-form-urlencoded\n",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/x-www-form-urlencoded",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"url": "http://localhost:3000/pokemons",
+			"queryParams": [],
+			"events": [],
+			"pathVariables": {},
+			"pathVariableData": [],
+			"method": "POST",
+			"data": [
+				{
+					"key": "idnational",
+					"value": "",
+					"description": "",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "name",
+					"value": "",
+					"description": "",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "type",
+					"value": "",
+					"description": "",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "type2",
+					"value": "",
+					"description": "",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "img",
+					"value": "",
+					"description": "",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "niveau",
+					"value": "",
+					"description": "",
+					"type": "text",
+					"enabled": true
+				}
+			],
+			"dataMode": "urlencoded",
+			"version": 2,
+			"auth": null,
+			"time": 1518735848306,
+			"name": "/pokemons (create)",
+			"description": "",
+			"collectionId": "f93c1fa0-275d-3bde-21ce-cd892782dadd",
+			"responses": [],
+			"currentHelper": null,
+			"helperAttributes": null
+		},
+		{
+			"id": "daf37101-ef61-3787-44b4-e611cf05e817",
+			"headers": "",
+			"headerData": [],
+			"url": "http://localhost:3000/pokemons/Bulbizarre",
+			"queryParams": [],
+			"pathVariables": {},
+			"pathVariableData": [],
+			"events": [],
+			"auth": null,
+			"method": "GET",
+			"collectionId": "f93c1fa0-275d-3bde-21ce-cd892782dadd",
+			"data": null,
+			"dataMode": "params",
+			"name": "/pokemons/:name",
+			"description": "",
+			"descriptionFormat": "html",
+			"time": 1518639371128,
+			"version": 2,
+			"responses": [],
+			"currentHelper": null,
+			"helperAttributes": null
+		},
+		{
+			"id": "eb1c46eb-1494-2a8f-1def-34008a127d29",
+			"headers": "Content-Type: application/x-www-form-urlencoded\n",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/x-www-form-urlencoded",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"url": "http://localhost:3000/pokemons/",
+			"queryParams": [],
+			"events": [],
+			"pathVariables": {},
+			"pathVariableData": [],
+			"method": "DELETE",
+			"data": [],
+			"dataMode": "urlencoded",
+			"version": 2,
+			"auth": null,
+			"time": 1518648317217,
+			"name": "/pokemons/:id (delete)",
+			"description": "",
+			"collectionId": "f93c1fa0-275d-3bde-21ce-cd892782dadd",
+			"responses": [],
+			"currentHelper": null,
+			"helperAttributes": null
+		}
+	]
+}
